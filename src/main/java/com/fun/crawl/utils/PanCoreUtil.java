@@ -335,10 +335,20 @@ public class PanCoreUtil {
             map.put(head[0], head[1]);
 
         }
+//        System.out.println(map);
+
+//        Response response = getRequest("https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=", "", map, map);
+//        System.out.println(response.headers().toMultimap());
+//        System.out.println(response.headers().get("set-cookie"));
+
+        //获取登陆二维码
+        //第一步  通过此URL获取 js
+        //https://passport.baidu.com/v2/api/getqrcode?lp=pc&qrloginfrom=pc&gid=E2CB08F-B63E-4E07-9FF9-DACFFDD98976&callback=tangram_guid_1555514307408&apiver=v3&tt=1555514307433&tpl=netdisk&_=1555514307443
 
 
-        Response response = getRequest("https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=", "", map, map);
-        System.out.println(response.headers().toMultimap());
+
+
+
 
     }
 
