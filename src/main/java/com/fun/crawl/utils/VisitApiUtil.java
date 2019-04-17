@@ -170,7 +170,7 @@ public class VisitApiUtil {
                     .addHeader("cache-control", "no-cache");
             if ("GET".equals(method.toUpperCase())) {
                 if (StringUtils.isBlank(onlyValue)) {
-//                    uilder.addHeader("headerquery", mapToJson(requestMap, true));//请求参数
+                    uilder.addHeader("headerquery", mapToJson(requestMap, true));//请求参数
                 }
                 request = uilder.get().build();
             } else {
