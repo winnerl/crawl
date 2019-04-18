@@ -13,15 +13,19 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.fun.crawl.utils.VisitApiUtil.mapToPostStr;
+
 @Slf4j
 public class PanCoreUtil {
 
     private static final String CHARSET_NAME = "UTF-8";
+    private static final String POST_TPYE = "multipart/form-data; boundary=" + "-----WP----";
 
     public static final String PHOST = "https://pan.baidu.com";//访问订单系统接口的地址
     public static final String PAN_PASSPORT_HOST = "https://passport.baidu.com";//访问订单系统接口的地址
@@ -29,22 +33,12 @@ public class PanCoreUtil {
     public static ConcurrentHashMap<String, String> standard_cookieMap = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, String> standard_headMap = new ConcurrentHashMap<>();
 
-    static {
-        standard_headMap.put("host", "pan.baidu.com");
-        standard_headMap.put("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
-        standard_headMap.put("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-        standard_headMap.put("accept-language", "zh-CN,zh;q=0.9");
-        standard_headMap.put("upgrade-insecure-requests", "1");
-        standard_headMap.put("accept-encoding", "gzip, deflate, br");
-    }
-
     public static String standard_cookie = "";
     private static final OkHttpClient mOkHttpClient = new OkHttpClient().newBuilder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .pingInterval(30, TimeUnit.SECONDS).build();
-
 
     /**
      * 该不会开启异步线程。
@@ -178,34 +172,66 @@ public class PanCoreUtil {
                 tempcookie += skey + "=" + value + ";";
             }
             standard_cookie = tempcookie;
-
-
-//            for (String key : names) {
-//                if (key != null) {
-//                    if (key.equals("Set-Cookie")) {
-//                        String tempcookie = "";
-//                        for (String value : head.values("Set-Cookie")) {
-//                            String[] temparray = value.split("; ");
-//                            String[] sp = temparray[0].split("=", 2);
-//                            standard_cookieMap.put(sp[0], sp[1]);
-//                        }
-//
-//                        Set<String> ks = standard_cookieMap.keySet();
-//                        Iterator<String> it = ks.iterator();
-//                        while (it.hasNext()) {
-//                            String skey = it.next();
-//                            String value = standard_cookieMap.get(skey);
-//                            tempcookie += skey + "=" + value + ";";
-//                        }
-//                        standard_cookie = tempcookie;
-//                    }
-//                }
-//            }
-
-
             return response;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 接口请求返回response
+     *
+     * @param host      请求接口的域名地址
+     * @param apiUrl    请求接口名称，格式如："/api/list"
+     * @param inputMap  参数集合Map<key,value>，key参数名称，value参数值,都是字符串
+     * @param method    提交方式：DELETE，POST，PUT，GET,"GET"直接地址请求，默认："POST"
+     * @param onlyValue 请求参数只有一个的时候的值(GET请求用到，其他请求为null即可)
+     * @return 响应结果
+     */
+    public static Response request(String host, String apiUrl, Map<String, String> inputMap, String method,String cookie) {
+        log.info("visit,请求方式：" + method + ",请求接口：" + apiUrl + ",请求参数：" + inputMap);
+        String jsonStr = null;
+        long startTime = System.currentTimeMillis();
+        Map<String, String> headers  =getMainHeader();
+        Request request = null;
+        Request.Builder uilder = new Request.Builder();
+        if (headers != null) {
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                uilder.addHeader(header.getKey(), header.getValue());
+            }
+            uilder.addHeader("cache-control", "no-cache");
+        }
+        String requestURL = getRequestURL(host, apiUrl);
+
+        try {
+            Map<String, String> requestMap = inputMap;//请求参数
+
+            if ("GET".equals(method.toUpperCase())) {
+                if (requestMap != null) {
+                    requestURL = requestURL + mapToGetString(requestMap, false);
+                }
+            }
+            uilder.url(requestURL);
+            if ("GET".equals(method.toUpperCase())) {
+
+                request = uilder.get().build();
+            } else {
+                RequestBody body = RequestBody.create(MediaType.parse(POST_TPYE), mapToPostStr(requestMap));//请求参数
+                if ("DELETE".equals(method.toUpperCase())) {
+                    request = uilder.delete(body).build();
+                } else if ("POST".equals(method.toUpperCase())) {
+                    request = uilder.post(body).build();
+                } else if ("PUT".equals(method.toUpperCase())) {
+                    request = uilder.put(body).build();
+                }
+            }
+            Response response = execute(request);
+            return response;
+        } catch (Exception e) {
+            log.error("req,请求接口异常", e);
+        } finally {
+            log.info("req请求接口：" + apiUrl + ",响应时间为" + ((System.currentTimeMillis() - startTime)) + "ms,响应结果：" + jsonStr);
         }
         return null;
     }
@@ -247,7 +273,6 @@ public class PanCoreUtil {
         }
         return res;
     }
-
 
     /**
      * GET 字符方法构建
@@ -297,7 +322,6 @@ public class PanCoreUtil {
         return res;
     }
 
-
     /**
      * 将Json对象转换成Map
      *
@@ -318,7 +342,6 @@ public class PanCoreUtil {
         }
         return result;
     }
-
 
     /**
      * 组合请求地址
@@ -383,7 +406,6 @@ public class PanCoreUtil {
         return null;
     }
 
-
     /**
      * 第一步
      * 获取登录二维码 签名 Sign 和二维码地址
@@ -417,7 +439,6 @@ public class PanCoreUtil {
         headers.put("Host", "passport.baidu.com");
         Response response = getRequest(PAN_PASSPORT_HOST, "/v2/api/getqrcode", params, headers);
         try {
-
 
             String res = response.body().string();
             System.out.println(res);
@@ -481,7 +502,6 @@ public class PanCoreUtil {
         Response response = getRequest(PAN_PASSPORT_HOST, "/v3/login/main/qrbdusslogin", params, null);
         try {
             String res = response.body().string();
-            System.out.println(res);
             res = subJStoJson(res);//返回数据 截取获取 json
             return toMap(res);//json 转Map
         } catch (Exception e) {
@@ -489,7 +509,6 @@ public class PanCoreUtil {
         }
         return null;
     }
-
 
     /**
      * 第4步，https://passport.baidu.com/v3/login/api/auth/?return_type=5&tpl=netdisk&u=https%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome
@@ -509,47 +528,144 @@ public class PanCoreUtil {
         }
 
         headers.put("Host", "passport.baidu.com");
-        headers.put("Cookie", "UBI=fi_PncwhpxZ%7ETaJc9Ct7B5fdOHLCvaJSQD0; STOKEN=e56597bcc213e3494f4a12097f3fce8f9bab0e4f11fc58bb60391f85e3cb32cd; BDUSS=0hPYWtuZndWbUNwZn5YMW9iaFMzSXR0RTRyU0JNVmVidUwxMnNKekE0S3YxZDljSVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK9IuFyvSLhcd; PTOKEN=d297860f21025de03050b4ca32f04c97; BAIDUID=1319C599D1197156E22B024D5A7C9C60:FG=1; cflag=13%3A3; BIDUPSID=0B722C79E86D9EF7813210F2E70E45BB; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598")
-                ;
-
-        Response response = getRequest("https://passport.baidu.com/v3/login/api/auth/?return_type=5&tpl=netdisk&u=https%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome", "", null, headers);
-        boolean redirect = response.isRedirect();
-        System.out.println(redirect);
-        System.out.println(response);
-        System.out.println(response.request().url());
-        String location = response.headers().get("Location");
+        headers.put("Cookie", standard_cookie);
+        Response response = getRequest(PAN_PASSPORT_HOST, "/v3/login/api/auth/", params, headers);
+        Response preRepsonse = response.priorResponse().priorResponse();
+        String location = preRepsonse.headers().get("Location");//是重定向URL
         return location;
     }
 
+    /**
+     * 第6步，需要 调用/disk/home  不带参数
+     * <p>
+     * 登录信息存入cookie
+     * 更新Cookie: BAIDUID=DC40829662EC00F42854FF80DC368CF6:FG=1; BDUSS=EMxRDc0SVQtU3pMM0x6WHZ4cGhSWU5EU2lsSXo5c1l6N35Cdk5JVUtyTmxDdUJjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGV9uFxlfbhcN; pan_login_way=1
+     *
+     * @param stoken passport 获取的stoken值
+     * @return
+     */
+    public static void diskHome() {
+        String tempcookie = "";
+        Map<String, String> headers = getMainHeader();
+        standard_cookie = "";//情况cookie
+        standard_cookieMap.put("pan_login_way", "1");
+        Set<String> ks = standard_cookieMap.keySet();
+        Iterator<String> it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            tempcookie += skey + "=" + value + ";";
+        }
+        standard_cookie = tempcookie;
+
+        headers.put("Host", "pan.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/");
+        headers.put("Cookie", standard_cookie);
+        Response response = getRequest(PHOST, "/disk/home", null, headers);
+        Response preResponse = response.priorResponse();
+//        System.out.println(standard_cookieMap);
+    }
 
     /**
-     * 第5步，需要 调用/disk/home  次 首先调用 需要token  然后 再调用不需要Token的。
+     * 第7步，需要 调用/disk/home  直接通过URL
+     *
+     * @param stoken passport 获取的stoken值
+     * @return
+     */
+    public static void sendTodiskHomeOne(String DURL) {
+        String tempcookie = "";
+        Map<String, String> headers = getMainHeader();
+        standard_cookie = "";//情况cookie
+        standard_cookieMap.put("pan_login_way", "1");
+        standard_cookieMap.put("PANWEB", "1");
+        Set<String> ks = standard_cookieMap.keySet();
+        Iterator<String> it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            tempcookie += skey + "=" + value + ";";
+        }
+        standard_cookie = tempcookie;
+
+        headers.put("Host", "pan.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/");
+        headers.put("Cookie", standard_cookie);
+        Response response = getRequest(DURL, "", null, headers);
+        Response preResponse = response.priorResponse().priorResponse();
+
+        //更新全局cookie
+        Headers head = preResponse.headers();
+         tempcookie = "";
+        for (String value : head.values("Set-Cookie")) {
+            String[] temparray = value.split("; ");
+            String[] sp = temparray[0].split("=", 2);
+            standard_cookieMap.put(sp[0], sp[1]);
+        }
+
+        ks = standard_cookieMap.keySet();
+         it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            tempcookie += skey + "=" + value + ";";
+        }
+        standard_cookie = tempcookie;
+
+    }
+
+    /**
+     * 第8步，需要 调用/disk/home  调用不需要Token的。
      * <p>
      * 登录信息存入cookie
      *
      * @param stoken passport 获取的stoken值
      * @return
      */
-    public static void sendTodiskHome(String stoken, Map<String, String> headers, Boolean needStoken) {
+    public static void sendTodiskHomeTwo( ) {
         Map<String, String> params = new HashMap<>();
         params.put("errno", "0");
         params.put("errmsg", "Auth Login Sucess");
         params.put("bduss", "");
         params.put("ssnerror", "0");
         params.put("traceid", "");
-        if (needStoken) {
-            params.put("stoken", stoken);
-        }
+        String tempcookie = "";
+        Map<String, String> headers = getMainHeader();
+        standard_cookie = "";//情况cookie
+        standard_cookieMap.put("pan_login_way", "1");
+        standard_cookieMap.put("PANWEB", "1");
 
-        if (headers == null) {
-            headers = getMainHeader();
+        Set<String> ks = standard_cookieMap.keySet();
+        Iterator<String> it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            tempcookie += skey + "=" + value + ";";
         }
-        headers.put("Host", "passport.baidu.com");
-//        headers.put("Referer", "https://pan.baidu.com/");
+        standard_cookie = tempcookie;
+
+        headers.put("Host", "pan.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/");
         headers.put("Cookie", standard_cookie);
-        Response response = getRequest(PAN_PASSPORT_HOST, "/v3/login/main/qrbdusslogin", params, headers);
-    }
+        Response response = getRequest(PHOST, "/disk/home", params, headers);
 
+        //更新全局cookie
+        Headers head = response.headers();
+        tempcookie = "";
+        for (String value : head.values("Set-Cookie")) {
+            String[] temparray = value.split("; ");
+            String[] sp = temparray[0].split("=", 2);
+            standard_cookieMap.put(sp[0], sp[1]);
+        }
+
+        ks = standard_cookieMap.keySet();
+        it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            tempcookie += skey + "=" + value + ";";
+        }
+        standard_cookie = tempcookie;
+    }
 
     /**
      * 公共头部Header
@@ -580,10 +696,30 @@ public class PanCoreUtil {
         return substring;
     }
 
+    /**
+     * 将url参数转换成map
+     *
+     * @param param aa=11&bb=22&cc=33
+     * @return
+     */
+    public static Map<String, Object> getUrlParams(String param) {
+        Map<String, Object> map = new HashMap<String, Object>(0);
+        if (StringUtils.isBlank(param)) {
+            return map;
+        }
+        String[] params = param.split("&");
+        for (int i = 0; i < params.length; i++) {
+            String[] p = params[i].split("=");
+            if (p.length == 2) {
+                map.put(p[0], p[1]);
+            }
+        }
+        return map;
+    }
+
     public static Response visitPost(String host, String apiUrl) {
         return null;
     }
-
 
     public static void main(String[] args) {
 
@@ -600,9 +736,7 @@ public class PanCoreUtil {
                 "Upgrade-Insecure-Requests: 1\n" +
                 "Cache-Control: max-age=0\n";
 
-
         String[] split = headString.split("\n");
-
 
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < split.length; i++) {
@@ -631,13 +765,52 @@ public class PanCoreUtil {
 //        System.out.println(codeSignAndCodeURL);
 //        Map<String, String> map1 = vertifyCodeUnicast("fa0fa91d8faf032239e9a332f2e8fb0b", null);
 //        Response request = getRequest("https://passport.baidu.com/channel/unicast?channel_id=fa0fa91d8faf032239e9a332f2e8fb0b&tpl=netdisk&gid=9A52DC4-A852-4621-A9DF-2C5358A40156&callback=tangram_guid_1555567027169&apiver=v3&tt=1555567119109&_=1555567119109", "", null, null);
-        try {
-            String s = v3LoginAuthGetToken(null);
-            //System.out.println(request.body().string());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String s = v3LoginAuthGetToken(null);
+//            //System.out.println(request.body().string());
+//            Map<String, Object> urlParams = getUrlParams(s);
+//            try {
+//            String stoken = (String) urlParams.get("stoken");
+//
+//                stoken = URLDecoder.decode(stoken, "UTF-8");
+//                System.out.println(stoken);
+//
+//            System.out.println(s);
+//
+//                s = URLDecoder.decode(s, "UTF-8");
+//
+//                System.out.println(s);
+//
+//                s = URLEncoder.encode(s, "UTF-8");
+//                System.out.println(s);
+//            } catch (UnsupportedEncodingException e) {
+//                log.error("字符中ENCODE失败", e);
+//            }
+//
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        Map<String, String> mainHeader = new HashMap<>();
+        mainHeader.put("Host", "pan.baidu.com");
+        mainHeader.put("Referer", "https://pan.baidu.com/");
+        mainHeader.put("Connection", "keep-alive");
+        mainHeader.put("Accept-Encoding", "gzip, deflate, br");
+        mainHeader.put("Accept-Language", "zh-CN,zh;q=0.9");
+        mainHeader.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+        mainHeader.put("Upgrade-Insecure-Requests", "1");
+        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
 
+        mainHeader.put("Cookie", "BDUSS=EMxRDc0SVQtU3pMM0x6WHZ4cGhSWU5EU2lsSXo5c1l6N35Cdk5JVUtyTmxDdUJjRVFBQUFBJCQAAAAAA" +
+                "AAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+                "AAAAAAAAAAAGV9uFxlfbhcN; pan_login_way=1; PANWEB=1; BAIDUID=77D3ABCE13E12DE3D4B5BA636CEFF11E:FG=1");
+        System.setProperty("https.protocols", "TLSv1");
+        Response response = getRequest("https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&stoken=XUsFlfd8pfx4adWmHDmWyxY%2FFjCuosSvm3kbrq%2FD5SXX7vEH4UVbzvHpZByh" +
+                "5UiEmxgJW0UYniUfe8joapLnZfiMhZP6FszF8sXMuU7gPHy95JGUgWcKpEpHZFkZpdJGsKEsCAHm%2B%2FJZXM0ke%2FYSTtdcyhXaNG%2BBT1qmcqwZRTEwj6x%2Fa%2F1Vsva4oZHtB" +
+                "fMgTnJ8xph4EqDpjurRA1YvnDVk7bDLLwE4707QiFAuM8WJXIX1PFmCXwd5LdvFjIv0SQFPgreaANXid" +
+                "T2kFO1bRg%3D%3D&bduss=&ssnerror=0&traceid=", "", null, mainHeader);
+        System.out.println(response.headers().toMultimap());
 
     }
 

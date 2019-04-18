@@ -116,14 +116,28 @@ class FrameDemo {
         }
         Map<String, String> v3map = PanCoreUtil.v3Login(v3Bduss, null);
         System.out.println(v3map);
-        System.out.println("------cookeMap-----");
+        System.out.println("------cookeMap-----1");
         System.out.println(PanCoreUtil.standard_cookieMap);
-        System.out.println("------cookie-----");
-        System.out.println(PanCoreUtil.standard_cookie);
-        System.out.println("------------PAN----STOKEN-----");
-        String s = PanCoreUtil.v3LoginAuthGetToken(null);
+//        System.out.println("------cookie-----");
+//        System.out.println(PanCoreUtil.standard_cookie);
 
-        System.out.println(s);
+
+
+
+//        System.out.println("------------PAN----STOKEN-----");
+        String URL = PanCoreUtil.v3LoginAuthGetToken(null);
+        PanCoreUtil.diskHome();
+//        System.out.println(stoken);
+        System.out.println(PanCoreUtil.standard_cookieMap);
+
+
+//
+        PanCoreUtil.sendTodiskHomeOne(URL);
+        System.out.println(PanCoreUtil.standard_cookieMap);
+        PanCoreUtil.sendTodiskHomeTwo();
+        System.out.println(PanCoreUtil.standard_cookieMap);
+//        System.out.println("---- HOU--cookeMap-----");
+//        System.out.println(PanCoreUtil.standard_cookieMap);
 
     }
 
