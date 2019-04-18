@@ -40,6 +40,10 @@ public class VisitApiUtil {
             .writeTimeout(10, TimeUnit.SECONDS)
             .pingInterval(30, TimeUnit.SECONDS).build();
 
+
+    private static  Map<String,String> cookieMap =new HashMap<>();
+
+
     /**
      * 返回OkHttpClient连接
      *

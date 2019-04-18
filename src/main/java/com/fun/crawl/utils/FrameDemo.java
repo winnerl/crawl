@@ -6,44 +6,46 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.Map;
 
-import static com.sun.glass.ui.Cursor.setVisible;
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import static com.fun.crawl.utils.PanCoreUtil.formatParams;
+import static com.fun.crawl.utils.PanCoreUtil.toMap;
 
-class FrameDemo{
+class FrameDemo {
     //定义该图形中所需的组件引用
     private Frame f;
     private Button but;
-    FrameDemo(){
-        init();
+
+    FrameDemo(Map<String, String> map) {
+        init(map);
     }
+
     //初始化组件
-    public void init()   {
+    public void init(Map<String, String> map) {
         //对frame进行基本设置
         f = new Frame("my frame");
-        f.setBounds(500,300,500,500);
+        f.setBounds(500, 300, 500, 500);
         f.setLayout(new FlowLayout());
 
         but = new Button("button");
         //将组件添加进窗体
 //        f.add(but);
         ImageIcon imageIcon = null;
-        try {
 
-            new URL("https://passport.baidu.com/channel/unicast?channel_id=ae221bf5b34a87c256960f641559dc39&tpl=netdisk&gid=E2CB08F-B63E-4E07-9FF9-DACFFDD98976&callback=tangram_guid_1555514307408&apiver=v3&tt=1555514307772&_=1555514307773");
-            imageIcon = new ImageIcon(new URL("https://passport.baidu.com/v2/api/qrcode?sign=ae221bf5b34a87c256960f641559dc39&uaonly=&client_id=&lp=pc&client=&qrloginfrom=pc&wechat=&traceid="));
-            System.out.println( imageIcon.getIconHeight());
+
+        try {
+            imageIcon = new ImageIcon(new URL("https://" + map.get("imgurl")));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+        System.out.println(imageIcon.getIconHeight());
+
 //        f.add(imageIcon);
         JLabel label1 = new JLabel(imageIcon);
-        label1.setSize(500,500);
-         f.add(label1);
+        label1.setSize(500, 500);
+        f.add(label1);
         //加载一下窗体上事件
         myEvent();
         //显示窗体
@@ -51,17 +53,19 @@ class FrameDemo{
     }
 
     //窗体事件
-    private void myEvent(){
-        f.addWindowListener(new WindowAdapter(){
-            public void windowClosing(WindowEvent e){
+    private void myEvent() {
+        f.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
                 System.exit(0);
-            }});
+            }
+        });
         //让按钮具备退出程序的功能
-        but.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        but.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 System.out.println("button 关闭的窗口");
                 System.exit(0);
-            }});
+            }
+        });
     }
 
 //    public void SwingTestImg(){
@@ -87,9 +91,41 @@ class FrameDemo{
 ////		label.setIcon(new ImageIcon(image));
 //    }
 
-    public static void main(String[] args)
-    {
-        new FrameDemo();
+    public static void main(String[] args) {
+        Map<String, String> codeSignAndCodeURL = PanCoreUtil.getCodeSignAndCodeURL(null);
+        new FrameDemo(codeSignAndCodeURL);
+        boolean isLoop = true;
+        String sign = codeSignAndCodeURL.get("sign");
+        String v3Bduss = "";
+        //最好多线程
+        while (isLoop) {
+            try {
+                Map<String, String> map = PanCoreUtil.vertifyCodeUnicast(sign);
+                if (map.containsKey("channel_v")) {
+                    String channel_v = map.get("channel_v");
+                    Map<String, String> v3map = toMap(channel_v);
+                    if ("0".equals(v3map.get("status"))) {
+                        v3Bduss=v3map.get("v");
+                        isLoop=false;
+                    }
+                }
+                Thread.sleep(2000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Map<String, String> v3map = PanCoreUtil.v3Login(v3Bduss, null);
+        System.out.println(v3map);
+        System.out.println("------cookeMap-----");
+        System.out.println(PanCoreUtil.standard_cookieMap);
+        System.out.println("------cookie-----");
+        System.out.println(PanCoreUtil.standard_cookie);
+        System.out.println("------------PAN----STOKEN-----");
+        String s = PanCoreUtil.v3LoginAuthGetToken(null);
+
+        System.out.println(s);
+
     }
+
 
 }
