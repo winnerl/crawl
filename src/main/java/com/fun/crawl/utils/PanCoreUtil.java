@@ -11,13 +11,12 @@ import org.json.JSONObject;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 import static com.fun.crawl.utils.VisitApiUtil.mapToPostStr;
 
@@ -189,18 +188,18 @@ public class PanCoreUtil {
      * @param onlyValue 请求参数只有一个的时候的值(GET请求用到，其他请求为null即可)
      * @return 响应结果
      */
-    public static Response request(String host, String apiUrl, Map<String, String> inputMap, String method,String cookie) {
+    public static String visit(String host, String apiUrl, Map<String, String> inputMap, String method, String cookie) {
         log.info("visit,请求方式：" + method + ",请求接口：" + apiUrl + ",请求参数：" + inputMap);
         String jsonStr = null;
         long startTime = System.currentTimeMillis();
-        Map<String, String> headers  =getMainHeader();
+        Map<String, String> headers = xmlHttpHead();
         Request request = null;
         Request.Builder uilder = new Request.Builder();
         if (headers != null) {
             for (Map.Entry<String, String> header : headers.entrySet()) {
                 uilder.addHeader(header.getKey(), header.getValue());
             }
-            uilder.addHeader("cache-control", "no-cache");
+            uilder.addHeader("Cookie", standard_cookie);
         }
         String requestURL = getRequestURL(host, apiUrl);
 
@@ -209,12 +208,11 @@ public class PanCoreUtil {
 
             if ("GET".equals(method.toUpperCase())) {
                 if (requestMap != null) {
-                    requestURL = requestURL + mapToGetString(requestMap, false);
+                    requestURL = requestURL + mapToGetString(requestMap, true);
                 }
             }
             uilder.url(requestURL);
             if ("GET".equals(method.toUpperCase())) {
-
                 request = uilder.get().build();
             } else {
                 RequestBody body = RequestBody.create(MediaType.parse(POST_TPYE), mapToPostStr(requestMap));//请求参数
@@ -227,13 +225,30 @@ public class PanCoreUtil {
                 }
             }
             Response response = execute(request);
-            return response;
+
+            Headers respronseHeader = response.headers();
+            boolean isGzip = false;
+            //Content-Encoding: gzip
+            for (String value : respronseHeader.values("Content-Encoding")) {
+                if (value.equals("gzip")) {
+                    isGzip = true;
+                }
+            }
+            if (isGzip) {
+                InputStream is = response.body().byteStream();
+                //gzip 解压数据
+                GZIPInputStream gzipIn = new GZIPInputStream(is);
+                jsonStr = streamToStr(gzipIn, "UTF-8");
+            } else {
+                jsonStr = response.body().string();
+            }
+
         } catch (Exception e) {
             log.error("req,请求接口异常", e);
         } finally {
             log.info("req请求接口：" + apiUrl + ",响应时间为" + ((System.currentTimeMillis() - startTime)) + "ms,响应结果：" + jsonStr);
         }
-        return null;
+        return jsonStr;
     }
 
     /**
@@ -304,19 +319,18 @@ public class PanCoreUtil {
                     sum++;
                     sb.append(name);
                     sb.append("=");
+                    if (boo) {
+                        try {
+                            value = URLEncoder.encode(value, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            log.error("字符中ENCODE失败", e);
+                        }
+                    }
                     sb.append(value);
                 }
             }
             if (sb.length() > 0) {
                 res = sb.toString();
-                if (boo) {
-
-                    try {
-                        res = URLEncoder.encode(res, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        log.error("字符中ENCODE失败", e);
-                    }
-                }
             }
         }
         return res;
@@ -595,7 +609,7 @@ public class PanCoreUtil {
 
         //更新全局cookie
         Headers head = preResponse.headers();
-         tempcookie = "";
+        tempcookie = "";
         for (String value : head.values("Set-Cookie")) {
             String[] temparray = value.split("; ");
             String[] sp = temparray[0].split("=", 2);
@@ -603,7 +617,7 @@ public class PanCoreUtil {
         }
 
         ks = standard_cookieMap.keySet();
-         it = ks.iterator();
+        it = ks.iterator();
         while (it.hasNext()) {
             String skey = it.next();
             String value = standard_cookieMap.get(skey);
@@ -621,7 +635,7 @@ public class PanCoreUtil {
      * @param stoken passport 获取的stoken值
      * @return
      */
-    public static void sendTodiskHomeTwo( ) {
+    public static Map<String, String> sendTodiskHomeTwo() {
         Map<String, String> params = new HashMap<>();
         params.put("errno", "0");
         params.put("errmsg", "Auth Login Sucess");
@@ -665,7 +679,53 @@ public class PanCoreUtil {
             tempcookie += skey + "=" + value + ";";
         }
         standard_cookie = tempcookie;
+        String token = "";
+        try {
+            String html;
+
+            InputStream is = response.body().byteStream();
+            //gzip 解压数据
+            GZIPInputStream gzipIn = new GZIPInputStream(is);
+            html = streamToStr(gzipIn, "UTF-8");
+            int start = html.indexOf("var context=");
+            int end = html.indexOf("var yunData = require('disk-system:widget/data/yunData.js');");
+            if (start != -1 && end != -1) {
+
+                token = html.substring(start + 12, end);
+                token = token.substring(0, token.lastIndexOf(";"));
+                try {
+                    Map<String, String> map = toMap(token);
+                    return map;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
+
+    public static String streamToStr(InputStream inputStream, String chartSet) {
+
+        StringBuilder builder = new StringBuilder();
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, chartSet));
+            String con;
+            while ((con = br.readLine()) != null) {
+                builder.append(con);
+            }
+            br.close();
+            return builder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return "";
+    }
+
 
     /**
      * 公共头部Header
@@ -679,6 +739,25 @@ public class PanCoreUtil {
         header.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
         header.put("Accept-Language", "zh-CN,zh;q=0.9");
         header.put("Upgrade-Insecure-Requests", "1");
+        header.put("Accept-Encoding", "gzip, deflate, br");
+        header.put("Connection", "keep-alive");
+        return header;
+
+
+    }
+
+    /**
+     * @return
+     */
+
+    public static Map<String, String> xmlHttpHead() {
+        Map header = new HashMap();
+        header.put("Host", "pan.baidu.com");
+        header.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
+        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+        header.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        header.put("Accept-Language", "zh-CN,zh;q=0.9");
+        header.put("X-Requested-With", "XMLHttpRequest");
         header.put("Accept-Encoding", "gzip, deflate, br");
         header.put("Connection", "keep-alive");
         return header;
@@ -720,6 +799,7 @@ public class PanCoreUtil {
     public static Response visitPost(String host, String apiUrl) {
         return null;
     }
+
 
     public static void main(String[] args) {
 
@@ -811,6 +891,7 @@ public class PanCoreUtil {
                 "fMgTnJ8xph4EqDpjurRA1YvnDVk7bDLLwE4707QiFAuM8WJXIX1PFmCXwd5LdvFjIv0SQFPgreaANXid" +
                 "T2kFO1bRg%3D%3D&bduss=&ssnerror=0&traceid=", "", null, mainHeader);
         System.out.println(response.headers().toMultimap());
+
 
     }
 

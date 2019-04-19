@@ -1,5 +1,10 @@
 package com.fun.crawl.utils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.fun.crawl.model.FileExtend;
+import com.fun.crawl.model.Thumbs;
+import com.fun.crawl.service.PanApiService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,9 +13,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
-import static com.fun.crawl.utils.PanCoreUtil.formatParams;
 import static com.fun.crawl.utils.PanCoreUtil.toMap;
 
 class FrameDemo {
@@ -105,8 +111,8 @@ class FrameDemo {
                     String channel_v = map.get("channel_v");
                     Map<String, String> v3map = toMap(channel_v);
                     if ("0".equals(v3map.get("status"))) {
-                        v3Bduss=v3map.get("v");
-                        isLoop=false;
+                        v3Bduss = v3map.get("v");
+                        isLoop = false;
                     }
                 }
                 Thread.sleep(2000);
@@ -122,8 +128,6 @@ class FrameDemo {
 //        System.out.println(PanCoreUtil.standard_cookie);
 
 
-
-
 //        System.out.println("------------PAN----STOKEN-----");
         String URL = PanCoreUtil.v3LoginAuthGetToken(null);
         PanCoreUtil.diskHome();
@@ -134,12 +138,34 @@ class FrameDemo {
 //
         PanCoreUtil.sendTodiskHomeOne(URL);
         System.out.println(PanCoreUtil.standard_cookieMap);
-        PanCoreUtil.sendTodiskHomeTwo();
+        Map<String, String> map = PanCoreUtil.sendTodiskHomeTwo();
+
+
         System.out.println(PanCoreUtil.standard_cookieMap);
 //        System.out.println("---- HOU--cookeMap-----");
 //        System.out.println(PanCoreUtil.standard_cookieMap);
+        String bdstoken = map.get("bdstoken");
+        List<FileExtend> time = PanApiService.list(bdstoken, 1, 1000, "/", "time", 1, 0, PanCoreUtil.standard_cookie);
 
     }
 
+    private final static ArrayBlockingQueue<Runnable> WORK_QUEUE = new ArrayBlockingQueue<>(9);
+
+    private final static RejectedExecutionHandler HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
+
+    private static ThreadPoolExecutor executorService = new ThreadPoolExecutor(16, 16, 1000, TimeUnit.MILLISECONDS, WORK_QUEUE, HANDLER);
+
+
+
+    public  List<FileExtend> generciTree(Executor executor, List<FileExtend> fileExtends, List<FileExtend>behindFiles ){
+        executorService.execute(()->{
+            LitemallFootprint footprint = new LitemallFootprint();
+            footprint.setUserId(userId);
+            footprint.setGoodsId(id);
+            footprintService.add(footprint);
+        });
+
+        return  fileExtends;
+    }
 
 }
