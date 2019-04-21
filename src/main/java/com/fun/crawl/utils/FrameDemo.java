@@ -1,8 +1,6 @@
 package com.fun.crawl.utils;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fun.crawl.model.FileExtend;
-import com.fun.crawl.model.Thumbs;
 import com.fun.crawl.service.PanApiService;
 
 import javax.swing.*;
@@ -156,12 +154,11 @@ class FrameDemo {
     private static ThreadPoolExecutor executorService = new ThreadPoolExecutor(16, 16, 1000, TimeUnit.MILLISECONDS, WORK_QUEUE, HANDLER);
 
 
-
-    public  List<FileExtend> generciTree(Executor executor, List<FileExtend> fileExtends ){
+    public List<FileExtend> generciTree(Executor executor, List<FileExtend> fileExtends) {
 
         for (FileExtend fileExtend : fileExtends) {
 
-            Callable<List> fileExtendsCallables=()->{
+            Callable<List> fileExtendsCallables = () -> {
 
 
                 return null;
@@ -180,8 +177,7 @@ class FrameDemo {
         }
 
 
-
-        return  fileExtends;
+        return fileExtends;
 
     }
 

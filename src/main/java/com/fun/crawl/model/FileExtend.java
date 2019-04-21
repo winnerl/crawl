@@ -1,5 +1,6 @@
 package com.fun.crawl.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -9,6 +10,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class FileExtend {
     //百度的字段
+
     private Long category;
     private Long dir_empty;
     private Long empty;
