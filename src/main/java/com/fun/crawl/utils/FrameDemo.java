@@ -157,15 +157,32 @@ class FrameDemo {
 
 
 
-    public  List<FileExtend> generciTree(Executor executor, List<FileExtend> fileExtends, List<FileExtend>behindFiles ){
-        executorService.execute(()->{
-            LitemallFootprint footprint = new LitemallFootprint();
-            footprint.setUserId(userId);
-            footprint.setGoodsId(id);
-            footprintService.add(footprint);
-        });
+    public  List<FileExtend> generciTree(Executor executor, List<FileExtend> fileExtends ){
+
+        for (FileExtend fileExtend : fileExtends) {
+
+            Callable<List> fileExtendsCallables=()->{
+
+
+                return null;
+            };
+            FutureTask<List> fileExtendsListTask = new FutureTask<>(fileExtendsCallables);
+
+            try {
+                fileExtendsListTask.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            executorService.submit(fileExtendsListTask);
+
+        }
+
+
 
         return  fileExtends;
+
     }
 
 }
