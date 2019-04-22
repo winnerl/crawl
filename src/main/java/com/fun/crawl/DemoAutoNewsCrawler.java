@@ -1,6 +1,5 @@
 package com.fun.crawl;
 
-
 import cn.edu.hfut.dmic.webcollector.model.CrawlDatums;
 import cn.edu.hfut.dmic.webcollector.model.Page;
 import cn.edu.hfut.dmic.webcollector.plugin.rocks.BreadthCrawler;
@@ -11,13 +10,10 @@ import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import org.apache.commons.lang.StringUtils;
-import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Crawling news from github news
@@ -120,18 +116,18 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         throw new MybatisPlusException("请输入正确的" + tip + "！");
     }
 
-    public static void main(String[] args) throws Exception {
+    public static <V, K> void main(String[] args) throws Exception {
         /**
          * DemoAutoNewsCrawler 构造器中会进行 数据初始化，这两个参数接着会传给父类
          * super(crawlPath, autoParse);
          * crawlPath：表示设置保存爬取记录的文件夹，本例运行之后会在应用根目录下生成一个 "crawl" 目录存放爬取信息
          * */
-        DemoAutoNewsCrawler crawler = new DemoAutoNewsCrawler("crawl", true);
+//        DemoAutoNewsCrawler crawler = new DemoAutoNewsCrawler("crawl", true);
         /**
          * 启动爬虫，爬取的深度为4层
          * 添加的第一层种子链接,为第1层
          */
-        crawler.start(4);
+//        crawler.start(4);
 // 代码生成器
         AutoGenerator mpg = new AutoGenerator();
 
@@ -141,36 +137,49 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         gc.setOutputDir(projectPath + "/src/main/java");
         gc.setAuthor("jobob");
         gc.setOpen(false);
+        gc.setBaseResultMap(true);
+        gc.setBaseColumnList(true);
+        gc.setFileOverride(true);
+        gc.setServiceName("%sService");
+
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
         mpg.setGlobalConfig(gc);
-
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/ant?useUnicode=true&useSSL=false&characterEncoding=utf8");
+        dsc.setUrl("jdbc:mysql://localhost:3306/cloud?useUnicode=true&useSSL=false&characterEncoding=utf8");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("密码");
+        dsc.setPassword("123456");
         mpg.setDataSource(dsc);
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName(scanner("模块名"));
-        pc.setParent("com.baomidou.ant");
+        pc.setModuleName("");
+        pc.setParent("com.fun.crawl");
+        pc.setEntity("model");
+
+
         mpg.setPackageInfo(pc);
 
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
+            Map<String, Object> map =new HashMap<>();
+
             @Override
             public void initMap() {
                 // to do nothing
+
+//                this.map.put("superServiceClass", "com.fun.crawl.base.service.BaseService");
+
             }
         };
 
         // 如果模板引擎是 freemarker
-        String templatePath = "/templates/mapper.xml.ftl";
+//        String templatePath = "/templates_1/mapper.xml.ftl";
         // 如果模板引擎是 velocity
-        // String templatePath = "/templates/mapper.xml.vm";
+         String templatePath = "/templates/mapper.xml.vm";
+         String service_java_Path = "/templates/service.java.vm";
 
         // 自定义输出配置
         List<FileOutConfig> focList = new ArrayList<>();
@@ -179,8 +188,16 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-                return projectPath + "/src/main/resources/mapper/" + pc.getModuleName()
+                return projectPath + "/src/main/java/com/fun/crawl/mapping" + pc.getModuleName()
                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+            }
+        });
+        focList.add(new FileOutConfig(service_java_Path) {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
+                return projectPath + "/src/main/java/com/fun/crawl/service" + pc.getModuleName()
+                        + "/" + tableInfo.getEntityName() + "Service" + StringPool.DOT_JAVA;
             }
         });
         /*
@@ -201,27 +218,37 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
 
         // 配置自定义输出模板
         //指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
-        // templateConfig.setEntity("templates/entity2.java");
-        // templateConfig.setService();
+        // templateConfig.setEntity("templates_1/entity2.java");
+//         templateConfig.setService();
         // templateConfig.setController();
 
         templateConfig.setXml(null);
+        templateConfig.setService(null);
         mpg.setTemplate(templateConfig);
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setNaming(NamingStrategy.underline_to_camel);
+        strategy.setSuperServiceClass("com.fun.crawl.base.service.BaseService");
+        strategy.setSuperServiceImplClass("com.fun.crawl.base.service.impl.BaseServiceImpl");
+        strategy.setSuperMapperClass("com.fun.crawl.base.mapper.BaseMapper");
+//        strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-        strategy.setSuperEntityClass("com.baomidou.ant.common.BaseEntity");
+//        strategy.setSuperEntityClass("com.baomidou.ant.common.BaseEntity");
         strategy.setEntityLombokModel(true);
-        strategy.setRestControllerStyle(true);
-        strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
-        strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
-        strategy.setSuperEntityColumns("id");
+//        strategy.setRestControllerStyle(true);
+//        strategy.setSuperControllerClass("com.baomidou.ant.common.BaseController");
+//        controllerMappingHyphenStyle
+//        strategy.setSuperEntityColumns("id");
+
+
         strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix(pc.getModuleName() + "_");
+        strategy.setEntityTableFieldAnnotationEnable(true);
+        strategy.setTablePrefix("t_");
+        strategy.setInclude("t_role");
+
+//        strategy.setCapitalMode()
         mpg.setStrategy(strategy);
-        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+        mpg.setTemplateEngine(new VelocityTemplateEngine());
         mpg.execute();
     }
 

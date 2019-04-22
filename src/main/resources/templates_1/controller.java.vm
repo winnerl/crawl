@@ -6,7 +6,7 @@ import ${tableInfo.servicePackageName}.${tableInfo.className}Service;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author $tableInfo.authorName
+ * @author   $tableInfo.authorName
  */
 @RestController
 public class $!{tableInfo.className}Controller extends BaseController<$!{tableInfo.className}Service, $!{tableInfo.className}, $!tableInfo.pk.attrType> {
