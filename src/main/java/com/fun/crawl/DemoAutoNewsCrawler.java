@@ -146,7 +146,7 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         mpg.setGlobalConfig(gc);
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/cloud?useUnicode=true&useSSL=false&characterEncoding=utf8");
+        dsc.setUrl("jdbc:mysql://localhost:3306/baidu?useUnicode=true&useSSL=false&characterEncoding=utf8");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
@@ -231,8 +231,8 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         strategy.setSuperServiceClass("com.fun.crawl.base.service.BaseService");
         strategy.setSuperServiceImplClass("com.fun.crawl.base.service.impl.BaseServiceImpl");
         strategy.setSuperMapperClass("com.fun.crawl.base.mapper.BaseMapper");
-//        strategy.setNaming(NamingStrategy.underline_to_camel);
-        strategy.setColumnNaming(NamingStrategy.underline_to_camel);
+        strategy.setNaming(NamingStrategy.underline_to_camel);
+        strategy.setColumnNaming(NamingStrategy.no_change);
 //        strategy.setSuperEntityClass("com.baomidou.ant.common.BaseEntity");
         strategy.setEntityLombokModel(true);
 //        strategy.setRestControllerStyle(true);
@@ -244,7 +244,7 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setEntityTableFieldAnnotationEnable(true);
         strategy.setTablePrefix("t_");
-        strategy.setInclude("t_role");
+        strategy.setInclude("t_file_extend");
 
 //        strategy.setCapitalMode()
         mpg.setStrategy(strategy);

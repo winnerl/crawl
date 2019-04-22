@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-@MapperScan("com.fisher.gen.mapper")
+@MapperScan("com.fun.crawl.mapper")
 public class MybatisPlusConfig {
 
 

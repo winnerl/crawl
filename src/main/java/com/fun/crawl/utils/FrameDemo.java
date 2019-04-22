@@ -2,6 +2,7 @@ package com.fun.crawl.utils;
 
 import com.fun.crawl.model.FileExtend;
 import com.fun.crawl.service.PanApiService;
+import org.apache.commons.collections.CollectionUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -139,11 +141,19 @@ class FrameDemo {
         Map<String, String> map = PanCoreUtil.sendTodiskHomeTwo();
 
 
-        System.out.println(PanCoreUtil.standard_cookieMap);
-//        System.out.println("---- HOU--cookeMap-----");
 //        System.out.println(PanCoreUtil.standard_cookieMap);
+//        System.out.println("---- HOU--cookeMap-----");
         String bdstoken = map.get("bdstoken");
-        List<FileExtend> time = PanApiService.list(bdstoken, 1, 1000, "/", "time", 1, 0, PanCoreUtil.standard_cookie);
+
+        System.out.println(bdstoken);
+        List<FileExtend> time = PanApiService.list(bdstoken, 1, 10, "/", "time", 1, 0, PanCoreUtil.standard_cookie);
+
+        System.out.println(PanCoreUtil.standard_cookie);
+        System.out.println("-----------------------");
+        System.out.println("-----------------------");
+        System.out.println("-----------------------");
+        generciTreeNoThread(time, "", "", bdstoken);
+
 
     }
 
@@ -175,10 +185,29 @@ class FrameDemo {
             executorService.submit(fileExtendsListTask);
 
         }
-
-
         return fileExtends;
-
     }
+
+
+    public static List<FileExtend> generciTreeNoThread(List<FileExtend> fileExtends, String pathName, String append, String bdstoken) {
+        append = "---" + append;
+        for (FileExtend fileExtend : fileExtends) {
+            //是否目录  ,且目录不为空
+            String name = fileExtend.getServer_filename();
+            pathName = fileExtend.getPath();
+            System.out.println(append + name);
+            if (fileExtend.getIsdir().equals(1L)&&fileExtend.getDir_empty().equals(0L)) {
+                List<FileExtend> secondlist = new ArrayList<>();
+                secondlist = PanApiService.listAll(bdstoken, pathName, "time", 1, 0, PanCoreUtil.standard_cookie);
+                if (CollectionUtils.isNotEmpty(secondlist)) {
+                    generciTreeNoThread(secondlist, pathName, append, bdstoken);
+                }
+
+            }
+
+        }
+        return fileExtends;
+    }
+
 
 }

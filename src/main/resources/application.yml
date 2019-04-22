@@ -11,7 +11,7 @@ spring:
 
   #数据源配置
   datasource:
-    url: jdbc:mysql://localhost:3306/fisher?useUnicode=true&characterEncoding=UTF8&useSSL=false&autoReconnect=true
+    url: jdbc:mysql://localhost:3306/baidu?useUnicode=true&characterEncoding=UTF8&useSSL=false&autoReconnect=true
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: 123456
@@ -46,7 +46,7 @@ mybatis-plus:
     #meta-object-handler: com.baomidou.mybatisplus.core.handlers.MetaObjectHandler
   configuration:
     #配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（没开启这个，SQL需要写as： select user_id as userId）
-    map-underscore-to-camel-case: true
+    map-underscore-to-camel-case: false
     cache-enabled: false
     #配置JdbcTypeForNull, oracle数据库必须配置
     jdbc-type-for-null: 'null'
