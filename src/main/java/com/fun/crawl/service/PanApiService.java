@@ -64,17 +64,21 @@ public class PanApiService {
         parmsMap.put("clienttype", "0");
         parmsMap.put("startLogTime", System.currentTimeMillis() + "");
         String jsonStr = PanCoreUtil.visit(PANHOST, "/api/list", parmsMap, "GET", cookie);
-        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
-        //请求失败再次请求下
-        Integer errno = jsonObject.getInteger("errno");
-        if (errno!=null&&errno.intValue()==1){
-             jsonStr = PanCoreUtil.visit(PANHOST, "/api/list", parmsMap, "GET", cookie);
-            jsonObject = JSONObject.parseObject(jsonStr);
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+            //请求失败再次请求下
+            Integer errno = jsonObject.getInteger("errno");
+            if (errno!=null&&errno.intValue()==1){
+                jsonStr = PanCoreUtil.visit(PANHOST, "/api/list", parmsMap, "GET", cookie);
+                jsonObject = JSONObject.parseObject(jsonStr);
+            }
+
+            List<FileExtend> jsStr = JSON.parseArray(jsonObject.getString("list"), FileExtend.class); //将字符串{“id”：1}
+            return jsStr;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        List<FileExtend> jsStr = JSON.parseArray(jsonObject.getString("list"), FileExtend.class); //将字符串{“id”：1}
-
-        return jsStr;
+        return null;
     }
 
 

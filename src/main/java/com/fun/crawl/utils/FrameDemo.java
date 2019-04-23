@@ -146,6 +146,7 @@ class FrameDemo {
         String bdstoken = map.get("bdstoken");
 
         System.out.println(bdstoken);
+        System.out.println(map);
         List<FileExtend> time = PanApiService.list(bdstoken, 1, 10, "/", "time", 1, 0, PanCoreUtil.standard_cookie);
 
         System.out.println(PanCoreUtil.standard_cookie);
