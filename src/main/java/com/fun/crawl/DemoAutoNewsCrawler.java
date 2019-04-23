@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import org.apache.commons.lang.StringUtils;
@@ -142,6 +143,8 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         gc.setFileOverride(true);
         gc.setServiceName("%sService");
 
+        gc.setDateType(DateType.ONLY_DATE);
+
         // gc.setSwagger2(true); 实体属性 Swagger2 注解
         mpg.setGlobalConfig(gc);
         // 数据源配置
@@ -232,7 +235,7 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         strategy.setSuperServiceImplClass("com.fun.crawl.base.service.impl.BaseServiceImpl");
         strategy.setSuperMapperClass("com.fun.crawl.base.mapper.BaseMapper");
         strategy.setNaming(NamingStrategy.underline_to_camel);
-        strategy.setColumnNaming(NamingStrategy.no_change);
+        strategy.setColumnNaming(NamingStrategy.underline_to_camel);
 //        strategy.setSuperEntityClass("com.baomidou.ant.common.BaseEntity");
         strategy.setEntityLombokModel(true);
 //        strategy.setRestControllerStyle(true);
@@ -244,7 +247,7 @@ public class DemoAutoNewsCrawler extends BreadthCrawler {
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setEntityTableFieldAnnotationEnable(true);
         strategy.setTablePrefix("t_");
-        strategy.setInclude("t_file_extend");
+        strategy.setInclude("t_manager");
 
 //        strategy.setCapitalMode()
         mpg.setStrategy(strategy);

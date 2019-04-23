@@ -3,7 +3,9 @@ package com.fun.crawl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fun.crawl.model.FileExtend;
+import com.fun.crawl.model.Manager;
 import com.fun.crawl.service.FileExtendService;
+import com.fun.crawl.service.ManagerService;
 import com.fun.crawl.service.PanApiService;
 import com.fun.crawl.utils.PanCoreUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -14,9 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.fun.crawl.service.PanApiService.creatTxtFile;
@@ -36,6 +43,9 @@ public class CrawlTest {
 
     @Autowired
     private FileExtendService fileExtendService;
+
+    @Autowired
+    private ManagerService managerService;
 
     @Test
     public void contextLoads() {
@@ -73,6 +83,21 @@ public class CrawlTest {
 
 
 
+    @Test
+    public void test4() {
+
+        Manager manager =new Manager();
+        manager.setCreateTime(new Date())
+                .setEnable(1)
+                .setPassword("12")
+                .setUsername("aaadmin")
+                .setLastloginTime(new Date())
+                .setPreloginTime(new Date())
+                .setLoginIp("1234131");
+        managerService.save(manager);
+        List<Manager> list = managerService.list();
+        System.out.println(list);
+    }
 
     @Test
     public void test5() {
@@ -94,7 +119,7 @@ public class CrawlTest {
         String cookie5 ="STOKEN=81a36b6b063182f63f9f3da750480478730dcdcea4bc350c069b35cb98922dc0;BDUSS=FBmdE94fnZ1TWtPbFh1M3Fya3pELXZUSWNSfmowZHhUQjlVV3M1ZEZkcTF-ZVZjSVFBQUFBJCQAAAAAAAAAAAEAAADHW7vzu6q46DEwNQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALVwvly1cL5cR;PTOKEN=b133d51efb174841cb20dda8fe7a7ae5;PASSID=gaqh0U;pan_login_way=1;SCRC=24b58915c41d9193ddbc8514297001f1;PANWEB=1;BAIDUID=D427F05EAB1FB6E4D6250A3E0700150D:FG=1;UBI=fi_PncwhpxZ%7ETaJc8r41xM91LmmnLLGvkPj;PANPSC=2532267171995234703%3AfLE2AaQsAy9PTIY2%2BkA715gn1M6s6PFhZpKg6vHEZYtNj7dWFKAKRQjn4HR56deP%2BWHvCWahCWJbARaCq7%2FByiQh6I2BTZ9z2uDs6CLtOh1hBaVJALTttiqlH64llb7AnVHzpvZ0Ztd2TQaGfItAk1vKX4DMNpv6HhgzMjI7O4rZ81l%2BOzvAFtukglyu8ZF1ECu7OGpslid9bfFV5UX2VQ%3D%3D;";
 
 
-//        genericJSONtext(bdstoken1, cookie1,"1");
+        genericJSONtext(bdstoken1, cookie1,"1");
 //        genericJSONtext(bdstoken2, cookie2,"2");
 //        genericJSONtext(bdstoken3, cookie3,"3");
 //        genericJSONtext(bdstoken4, cookie4,"4");
@@ -119,7 +144,7 @@ public class CrawlTest {
         List<FileExtend> time = PanApiService.list(bdstoken, 1, 500, "/", "name", 0, 0, cookie);
         List<FileExtend> listTree = new ArrayList<>();//用来存放数据
         List<FileExtend> fileExtends = generciTreeJSON(time, "", 0, bdstoken, listTree);
-        fileExtends=fileExtends.stream().filter(fileExtend ->fileExtend.getIsdir()==1 ).collect(Collectors.toList());
+
         Object o = JSON.toJSON(fileExtends);
         try {
             boolean json = creatTxtFile(index);

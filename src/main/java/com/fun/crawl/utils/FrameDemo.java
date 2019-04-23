@@ -153,7 +153,8 @@ class FrameDemo {
         System.out.println("-----------------------");
         System.out.println("-----------------------");
         System.out.println("-----------------------");
-        generciTreeNoThread(time, "", "", bdstoken);
+        List<FileExtend> fileExtends = generciTreeNoThread(time, "", "", bdstoken);
+        System.out.println(fileExtends);
 
 
     }
