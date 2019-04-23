@@ -64,7 +64,16 @@ public class PanApiService {
         parmsMap.put("clienttype", "0");
         parmsMap.put("startLogTime", System.currentTimeMillis() + "");
         String jsonStr = PanCoreUtil.visit(PANHOST, "/api/list", parmsMap, "GET", cookie);
-        List<FileExtend> jsStr = JSON.parseArray(JSONObject.parseObject(jsonStr).getString("list"), FileExtend.class); //将字符串{“id”：1}
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        //请求失败再次请求下
+        Integer errno = jsonObject.getInteger("errno");
+        if (errno!=null&&errno.intValue()==1){
+             jsonStr = PanCoreUtil.visit(PANHOST, "/api/list", parmsMap, "GET", cookie);
+            jsonObject = JSONObject.parseObject(jsonStr);
+        }
+
+        List<FileExtend> jsStr = JSON.parseArray(jsonObject.getString("list"), FileExtend.class); //将字符串{“id”：1}
+
         return jsStr;
     }
 
@@ -82,11 +91,11 @@ public class PanApiService {
     public static List<FileExtend> listAll(String bdsToken, String dir, String order, int desc, int showempty, String cookie) {
         Boolean isall = true;
         int page = 1;
-        int pageSize = 1000;
+        int pageSize = 500;
         List<FileExtend> allList = new ArrayList<>();
         while (isall) {
-            List<FileExtend> templist = PanApiService.list(bdsToken, page, pageSize, dir, order, desc, showempty, PanCoreUtil.standard_cookie);
 
+            List<FileExtend> templist = PanApiService.list(bdsToken, page, pageSize, dir, order, desc, showempty, PanCoreUtil.standard_cookie);
             if (CollectionUtils.isNotEmpty(templist)) {
                 if (templist.size() < pageSize) {
                     isall = false;
@@ -126,72 +135,6 @@ public class PanApiService {
     }
 
 
-    public static List<FileExtend> generciTreeNoThread(List<FileExtend> fileExtends, String pathName, String append, String bdstoken) {
-        append = "    " + append;
-        for (FileExtend fileExtend : fileExtends) {
-
-
-            //是否目录  ,且目录不为空
-            String name = fileExtend.getServer_filename();
-            pathName = fileExtend.getPath();
-            System.out.println(append + name);
-            if (fileExtend.getIsdir().equals(1L) && fileExtend.getDir_empty().equals(0L)) {
-                List<FileExtend> secondlist = new ArrayList<>();
-                secondlist = PanApiService.listAll(bdstoken, pathName, "time", 1, 0, PanCoreUtil.standard_cookie);
-                if (CollectionUtils.isNotEmpty(secondlist)) {
-                    generciTreeNoThread(secondlist, pathName, append, bdstoken);
-                }
-            }
-        }
-
-        return fileExtends;
-    }
-
-    public static long id = 1;
-    public static List<FileExtend> generciTreeJSON(List<FileExtend> fileExtends, String pathName, long parentId, String bdstoken, List<FileExtend> allTree) {
-        for (FileExtend fileExtend : fileExtends) {
-            fileExtend.setParent_id(parentId);
-            fileExtend.setId(id++);
-            //重新添加到新的集合中
-            allTree.add(fileExtend);
-            String name = fileExtend.getServer_filename();
-            String path_Name = fileExtend.getPath();
-            if (fileExtend.getIsdir().equals(1L) && fileExtend.getDir_empty().equals(0L)) {
-                List<FileExtend> secondlist = new ArrayList<>();
-                secondlist = PanApiService.listAll(bdstoken, path_Name, "time", 1, 0, PanCoreUtil.standard_cookie);
-                if (CollectionUtils.isNotEmpty(secondlist)) {
-                    generciTreeJSON(secondlist, path_Name, fileExtend.getId(), bdstoken, allTree);
-                }
-            }
-        }
-        return allTree;
-    }
-
-    public static List<FileExtend> generciTreeJSONThread(List<FileExtend> fileExtends, String pathName, long parentId, String bdstoken, List<FileExtend> allTree) {
-
-        for (FileExtend fileExtend : fileExtends) {
-
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    fileExtend.setParent_id(parentId);
-                    fileExtend.setId(id++);
-                    //重新添加到新的集合中
-                    allTree.add(fileExtend);
-                    String name = fileExtend.getServer_filename();
-                    String path_Name = fileExtend.getPath();
-                    if (fileExtend.getIsdir().equals(1L) && fileExtend.getDir_empty().equals(0L)) {
-                        List<FileExtend> secondlist = new ArrayList<>();
-                        secondlist = PanApiService.listAll(bdstoken, path_Name, "time", 1, 0, PanCoreUtil.standard_cookie);
-                        if (CollectionUtils.isNotEmpty(secondlist)) {
-                            generciTreeJSON(secondlist, path_Name, fileExtend.getId(), bdstoken, allTree);
-                        }
-                    }
-                }
-            });
-        }
-        return allTree;
-    }
 
     private static String path = "D:/";
     private static String filenameTemp;
@@ -285,7 +228,7 @@ public class PanApiService {
         PanCoreUtil.standard_cookie = cookie;
         List<FileExtend> time = PanApiService.list(bdstoken, 1, 500, "/", "time", 1, 0, cookie);
         List<FileExtend> listTree = new ArrayList<>();//用来存放数据
-        listTree = generciTreeJSON(time, "", 0, bdstoken, listTree);
+//        listTree = generciTreeJSON(time, "", 0, bdstoken, listTree);
 
         Object o = JSON.toJSON(listTree);
         boolean json = creatTxtFile("json");
