@@ -3,6 +3,7 @@ package com.fun.crawl.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fun.crawl.model.FileExtend;
+import okhttp3.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -113,33 +114,11 @@ public class PanApiService {
         return allList;
     }
 
-    public List<FileExtend> generciTree(Executor executor, List<FileExtend> fileExtends) {
-
-        for (FileExtend fileExtend : fileExtends) {
-
-            Callable<List> fileExtendsCallables = () -> {
-
-
-                return null;
-            };
-            FutureTask<List> fileExtendsListTask = new FutureTask<>(fileExtendsCallables);
-
-            try {
-                fileExtendsListTask.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            executorService.submit(fileExtendsListTask);
-
-        }
-        return fileExtends;
-    }
-
 
 
     private static String path = "D:/";
+
+
     private static String filenameTemp;
 
     /**
@@ -224,22 +203,24 @@ public class PanApiService {
 
 
     public static void main(String[] args) throws IOException {
-        String bdstoken = "7b6c3dff1531ad59d5432884df8cc254";
-        String cookie = "STOKEN=6071f2c1389267d05bdc009b48bc55500edb2a12e4dcfad2785a66a8bba23db9;BDUSS=ozMUMtUk9PNldtT3R3RGlHdVZlcThVRTQtRGdEN0tmNGNDSHZ3MzhZak05T1JjSVFBQUFBJCQAAAAAAAAAAAEAAADI-sctu9jS5MyrtuDIxrK7wcsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMxnvVzMZ71cak;PTOKEN=fdf6c05b2c69578a43931d03f04cf779;PASSID=PkT5p4;pan_login_way=1;SCRC=4f5925e0a9b0514be6abff368130e0bb;PANWEB=1;BAIDUID=4C4F6C65F2F552B1F2C2F3358FBEEDF6:FG=1;UBI=fi_PncwhpxZ%7ETaJc7NYWvbnTO1J7%7EnDxIRq;PANPSC=17568544890574622578%3ACQw3%2BDxyk2BRkgvSzOz9dJgn1M6s6PFhIxDGQGgSurphs5%2FZj17TVSKbQDGpKep%2B9n0Zo7M8Q56fpIvAqVETj9R028b7i%2B2HmldUB8t5cdsrCTCyp51uP3qD0KGUduysGiOBsXB2oU0vuXRe4orLfC78Y3XhlnteBrU3YVu%2FDjscT50Qvhq4xWPLhvADPmNCIermaD9w8EN3j5cyRAFOLeKEQjOY60ydAQwoaZBLaos%3D;";
-
-
+        String bdstoken = "762f47ee51eae09de19580bedfdbc3f8";
+//{"flag":"1","vip_end_time":"null","file_list":"null","task_time":"1556110658","sign2":"function s(j,r){var a=[];var p=[];var o=\"\";var v=j.length;for(var q=0;q<256;q++){a[q]=j.substr((q%v),1).charCodeAt(0);p[q]=q}for(var u=q=0;q<256;q++){u=(u+p[q]+a[q])%256;var t=p[q];p[q]=p[u];p[u]=t}for(var i=u=q=0;q<r.length;q++){i=(i+1)%256;u=(u+p[i])%256;var t=p[i];p[i]=p[u];p[u]=t;k=p[((p[i]+p[u])%256)];o+=String.fromCharCode(r.charCodeAt(q)^k)}return o};","sign1":"65d557bc9673bfd5fad2ac7b3931c92e1fd055ba","sign3":"d76e889b6aafd3087ac3bd56f4d4053a","vol_autoup":"0","uk":"3754657732","is_auto_svip":"0","is_evip":"0","bdstoken":"762f47ee51eae09de19580bedfdbc3f8","timestamp":"1556110658","is_svip":"0","activity_end_time":"0","sharedir":"0","pansuk":"3fXeHIPvSh8uUIsgkcDMmg","is_vip":"0","loginstate":"1","sampling":"{\"expvar\":[\"company_pub\",\"sampling_test\",\"disk_center_change\",\"video_high_speed\",\"disk_timeline\"]}","need_tips":"null","photo":"https:\/\/ss0.bdstatic.com\/7Ls0a8Sm1A5BphGlnYG\/sys\/portrait\/item\/c9df1bcf.jpg","timeline_status":"1","face_status":"0","curr_activity_code":"0","urlparam":"[]","token":"06a4Dtu0Ck6K8xHuLzwohiURe6tzF5wj1y6n+TzyM5wEKEVLagvKABeHN8USiYx422Z\/ryh2Tuxbmk6yVuPzo\/REMqP343Mw0k+9lNIUbQ1YOiPGF8e2mW4n9o32XTMK9VrTGGTgM\/qS9fmZc0uoHo\/OY3OgdnzVBz4zFKmOAk4PeYGp2aLUP\/hsLPtLHsNucE4yRhK80jkMloAD9twrKrG5NGJxm\/07BZDnPmE8KiBCd63AEQRs7c6P75YCmSPiL22sY30TeDjR9PYnDIlMz8B0Ep14cUiuqqk","XDUSS":"pansec_DCb740ccc5511e5e8fedcff06b081203-Gv1eI772krMQbWySOWOa0%2BFsurt3zL6Dx1wk0CBXK3QCkIL9FF62z41ncvkHLJoYceM5BBCQ7eDsTRoccbEfTZFou80Ib4vzu24Mcnrn0zZoSKESVoLoXFIKICroEtukV12447ksb9SW5uF5qars1WRhUCFCYz5q5JYQkWHUEP3cBER5hT8FRsPuChiE%2BHDtr8sKFpjc%2B2aqRWlfC9JKeNxQGvKYD1sJumncv8oEukTz%2BmwwFEmpte7tuDUE3ZzTkgKHTqweYfwfEb%2Bc9py8pg%3D%3D","third":"0","show_vip_ad":"0","task_key":"896a8c4d6b2f441558d5749501275db3cc1defb3","applystatus":"1","bt_paths":"null","source_entry_tip_message":"海量音频免费听","srv_ts":"1556110658","is_year_vip":"0","activity_status":"0","username":"回忆太多不好理"}
+//        String cookie = "STOKEN=94033d6dbb41b30916bcb7bfdbfedbd332da10ce6c9d4d070a9ccce8bbc92725;BDUSS=2cyV2dRdHo3MDFIVk1IN1JHU2xxeklXbjRMb0g4WW1TaEJqZFZQMmYwSUtCLWhjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAp6wFwKesBcN;PTOKEN=d7744d44ad3cb778ba3cde6f2fc1946e;PASSID=rVKWGK;pan_login_way=1;SCRC=710b862f7b679cf0837c9c4f0ffa1586;PANWEB=1;BAIDUID=B53094540A6B275D066B042AAF8BB803:FG=1;UBI=fi_PncwhpxZ%7ETaJc3TP4RRUaOGXUSMc%7EW-m;PANPSC=3597290008676799715%3AQsaf43VL%2Ft4Nqu6Hm%2FZfKJgn1M6s6PFhIxDGQGgSurphs5%2FZj17TVSKbQDGpKep%2Bcpe3QKXhtMijDaTuwfy3xNR028b7i%2B2HmldUB8t5cdskwB6OGEKN0fEZy5xVYxZqLvxjdeGWe16DTmdSEuVx3i%2B37N4rR16QY8uG8AM%2BY0Ih6uZoP3DwQ3ePlzJEAU4t4oRCM5jrTJ0BDChpkEtqiw%3D%3D; ";
+                String cookie = "pcsett=; STOKEN=; BAIDUID=:FG=1; BDUSS=W94WmJ4Vnl-LXJ6c1BTRTUzMH5ETGttaHFzWHN0MDFJRDdsVzhBWDlSTmRBdWhjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF11wFxddcBcV; cflag=13%3A3; BIDUPSID=; PSTM=1556112058; ; delPer=0; PSINO=7; H_PS_PSSID=; BDORZ=" +
+                "";
         PanCoreUtil.standard_cookie = cookie;
-        List<FileExtend> time = PanApiService.list(bdstoken, 1, 500, "/", "time", 1, 0, cookie);
-        List<FileExtend> listTree = new ArrayList<>();//用来存放数据
-//        listTree = generciTreeJSON(time, "", 0, bdstoken, listTree);
+        Map<String, String> mainHeader = PanCoreUtil.getMainHeader();
+        mainHeader.put("Host","d.pcs.baidu.com");
+        mainHeader.put("Cookie",cookie);
+        mainHeader.put("Referer","https://pan.baidu.com/box-static/base/thirdParty/music/_nomd5_nomod/dist/muplayer_mp3.swf?t=1556109560601");
+        mainHeader.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
+        mainHeader.put("Upgrade-Insecure-Requests", "1");
 
-        Object o = JSON.toJSON(listTree);
-        boolean json = creatTxtFile("json");
-
-
-        boolean b = writeTxtFile(o.toString());
-        System.out.println(o.toString());
-
+        Response request = PanCoreUtil.getRequest("https://d.pcs.baidu.com/file/c6dfef6ba983b4efebc82091b76453cb?fid=3754657732-250528-526056080704766&rt=pr&sign=FDtAERVCY-DCb740ccc5511e5e8fedcff06b081203-nsaRaczEaRWqpT%2Bzv72VRgvot4M%3D&expires=8h&chkv=1&chkbd=1&chkpc=et&dp-logid=2640748955180820523&dp-callid=0&dstime=1556109556&r=429654111&vip=0&ext=.mp3"
+                , "", null, mainHeader
+        );
+        System.out.println(request.headers());
     }
 
 

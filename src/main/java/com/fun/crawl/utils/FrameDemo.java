@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ class FrameDemo {
 ////		label.setIcon(new ImageIcon(image));
 //    }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         Map<String, String> codeSignAndCodeURL = PanCoreUtil.getCodeSignAndCodeURL(null);
         new FrameDemo(codeSignAndCodeURL);
         boolean isLoop = true;
@@ -139,13 +140,13 @@ class FrameDemo {
         System.out.println(PanCoreUtil.standard_cookieMap);
         Map<String, String> map = PanCoreUtil.sendTodiskHomeTwo();
 
-
+        String s = PanCoreUtil.mapToJson(map, false);
 //        System.out.println(PanCoreUtil.standard_cookieMap);
 //        System.out.println("---- HOU--cookeMap-----");
         String bdstoken = map.get("bdstoken");
-
+        
         System.out.println(bdstoken);
-        System.out.println(map);
+        System.out.println(s);
         List<FileExtend> time = PanApiService.list(bdstoken, 1, 10, "/", "time", 1, 0, PanCoreUtil.standard_cookie);
 
         System.out.println(PanCoreUtil.standard_cookie);

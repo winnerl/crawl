@@ -37,6 +37,8 @@ public class PanCoreUtil {
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
+            .followRedirects(false)
+            .followSslRedirects(false)
             .pingInterval(30, TimeUnit.SECONDS).build();
 
     /**
@@ -127,7 +129,6 @@ public class PanCoreUtil {
 
         try {
             Response response = execute(request);
-
 //            //更新全局 map 和全局cookie
 //            Map<String, List<String>> map = response.headers().toMultimap();
 //            for (String key : map.keySet()) {
@@ -544,8 +545,11 @@ public class PanCoreUtil {
         headers.put("Host", "passport.baidu.com");
         headers.put("Cookie", standard_cookie);
         Response response = getRequest(PAN_PASSPORT_HOST, "/v3/login/api/auth/", params, headers);
-        Response preRepsonse = response.priorResponse().priorResponse();
-        String location = preRepsonse.headers().get("Location");//是重定向URL
+
+
+
+//        Response preRepsonse = response.priorResponse().priorResponse();
+        String location = response.headers().get("Location");//是重定向URL
         return location;
     }
 
@@ -604,8 +608,8 @@ public class PanCoreUtil {
         headers.put("Host", "pan.baidu.com");
         headers.put("Referer", "https://pan.baidu.com/");
         headers.put("Cookie", standard_cookie);
-        Response response = getRequest(DURL, "", null, headers);
-        Response preResponse = response.priorResponse().priorResponse();
+        Response preResponse = getRequest(DURL, "", null, headers);
+//        Response preResponse = response.priorResponse().priorResponse();
 
         //更新全局cookie
         Headers head = preResponse.headers();
