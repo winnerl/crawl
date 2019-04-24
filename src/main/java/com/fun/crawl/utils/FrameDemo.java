@@ -1,7 +1,6 @@
 package com.fun.crawl.utils;
 
 import com.fun.crawl.model.FileExtend;
-import com.fun.crawl.service.PanApiService;
 import org.apache.commons.collections.CollectionUtils;
 
 import javax.swing.*;

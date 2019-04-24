@@ -1,9 +1,8 @@
-package com.fun.crawl.service;
+package com.fun.crawl.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fun.crawl.model.FileExtend;
-import com.fun.crawl.utils.PanCoreUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-@Component
+//@Component
 public class PanApiService {
 
     public static final String PANHOST = "https://pan.baidu.com";//访问订单系统接口的地址

@@ -3,10 +3,8 @@ package com.fun.crawl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fun.crawl.model.FileExtend;
-import com.fun.crawl.model.Manager;
 import com.fun.crawl.service.FileExtendService;
-import com.fun.crawl.service.ManagerService;
-import com.fun.crawl.service.PanApiService;
+import com.fun.crawl.utils.PanApiService;
 import com.fun.crawl.utils.PanCoreUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
@@ -16,18 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import static com.fun.crawl.service.PanApiService.creatTxtFile;
-import static com.fun.crawl.service.PanApiService.writeTxtFile;
+import static com.fun.crawl.utils.PanApiService.creatTxtFile;
+import static com.fun.crawl.utils.PanApiService.writeTxtFile;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -44,8 +39,7 @@ public class CrawlTest {
     @Autowired
     private FileExtendService fileExtendService;
 
-    @Autowired
-    private ManagerService managerService;
+
 
     @Test
     public void contextLoads() {
@@ -86,17 +80,7 @@ public class CrawlTest {
     @Test
     public void test4() {
 
-        Manager manager =new Manager();
-        manager.setCreateTime(new Date())
-                .setEnable(1)
-                .setPassword("12")
-                .setUsername("aaadmin")
-                .setLastloginTime(new Date())
-                .setPreloginTime(new Date())
-                .setLoginIp("1234131");
-        managerService.save(manager);
-        List<Manager> list = managerService.list();
-        System.out.println(list);
+
     }
 
     @Test
