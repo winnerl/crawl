@@ -31,6 +31,7 @@ public class PanCoreUtil {
 
     public static ConcurrentHashMap<String, String> standard_cookieMap = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, String> standard_headMap = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, String> xml_headMap = new ConcurrentHashMap<>();
 
     public static String standard_cookie = "";
     private static final OkHttpClient mOkHttpClient = new OkHttpClient().newBuilder()
@@ -181,6 +182,7 @@ public class PanCoreUtil {
 
     /**
      * 接口请求返回response
+     * 使用xmlHttpHead xml_headMap 头部信息
      *
      * @param host      请求接口的域名地址
      * @param apiUrl    请求接口名称，格式如："/api/list"
@@ -200,7 +202,13 @@ public class PanCoreUtil {
             for (Map.Entry<String, String> header : headers.entrySet()) {
                 uilder.addHeader(header.getKey(), header.getValue());
             }
-            uilder.addHeader("Cookie", standard_cookie);
+
+            if (StringUtils.isNotEmpty(cookie)){
+                uilder.addHeader("Cookie",cookie);
+            }else {
+                uilder.addHeader("Cookie", standard_cookie);
+            }
+
         }
         String requestURL = getRequestURL(host, apiUrl);
 
@@ -215,7 +223,13 @@ public class PanCoreUtil {
             uilder.url(requestURL);
             if ("GET".equals(method.toUpperCase())) {
                 request = uilder.get().build();
-            } else {
+            }else if ("POST_FORM".equals(method.toUpperCase())) {
+                FormBody.Builder builder = new FormBody.Builder();
+                //java 8 遍历map entry
+//                    requestMap.entrySet().forEach(key->builder.add(key.getKey(),requestMap.get(key.getValue())));
+                RequestBody   formBody = builder.build();
+                request = uilder.post(formBody).build();
+            }  else {
                 RequestBody body = RequestBody.create(MediaType.parse(POST_TPYE), mapToPostStr(requestMap));//请求参数
                 if ("DELETE".equals(method.toUpperCase())) {
                     request = uilder.delete(body).build();
@@ -337,6 +351,44 @@ public class PanCoreUtil {
         return res;
     }
 
+
+
+
+  /**
+     * GET 字符方法构建
+     * map集合转  String字符串
+     *
+     * @param inputMap 集合
+     * @param boo      true表示进行转码，false表示不进行转码
+     * @return 字符串
+     * @throws UnsupportedEncodingException
+     */
+    public static Map<String,String> mapToToEncode(Map<String, String> inputMap ) {
+        Map<String, String> result = new HashMap<String, String>();
+        if (inputMap != null && inputMap.size() > 0) {
+            StringBuffer sb = new StringBuffer();
+            Iterator<String> iterator = inputMap.keySet().iterator();
+            int sum = 0;
+            while (iterator.hasNext()) {
+                String name = String.valueOf(iterator.next());
+                String value = String.valueOf(inputMap.get(name));
+                if (value == null) {
+                    value = "";
+                }
+                if (name != null) {
+                        try {
+                            value = URLEncoder.encode(value, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            log.error("字符中ENCODE失败", e);
+                        }
+                    result.put(name,value);
+                }
+            }
+
+        }
+        return  result;
+    }
+
     /**
      * 将Json对象转换成Map
      *
@@ -380,7 +432,52 @@ public class PanCoreUtil {
     }
 
     /**
-     * 获取百度登陆的GID
+     * 下载时候的sign
+     * <p>
+     * 登录时候返回的签名值
+     *
+     * @param sign3
+     * @param sign1
+     * @return
+     */
+    public static String getDownloadSign(String sign3, String sign1) {
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine engine = mgr.getEngineByName("javascript");
+        try {
+            engine.eval(ConstantUtils.SIGN_JS_TEXT);
+            Invocable inv = (Invocable) engine;
+            String res = (String) inv.invokeFunction("s", new String[]{sign3, sign1});
+            return Base64encodeJS(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 下载时候的sign
+     *
+     * @param url
+     * @param params
+     * @return
+     */
+    public static String Base64encodeJS(String String) {
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine engine = mgr.getEngineByName("javascript");
+        try {
+            engine.eval(ConstantUtils.BASE_64_JS_TEXT);
+            Invocable inv = (Invocable) engine;
+            String res = (String) inv.invokeFunction("base64", new String[]{String});
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * get  SIgn2
      *
      * @param url
      * @param params
@@ -413,7 +510,7 @@ public class PanCoreUtil {
         try {
             engine.eval(ConstantUtils.LOGIN_JS_TEXT);
             Invocable inv = (Invocable) engine;
-            String res = (String) inv.invokeFunction("getCallback", new String[]{"5050412", "D"});
+            String res = (String) inv.invokeFunction("getCallback");
             return res;
         } catch (Exception e) {
             e.printStackTrace();
@@ -545,7 +642,6 @@ public class PanCoreUtil {
         headers.put("Host", "passport.baidu.com");
         headers.put("Cookie", standard_cookie);
         Response response = getRequest(PAN_PASSPORT_HOST, "/v3/login/api/auth/", params, headers);
-
 
 
 //        Response preRepsonse = response.priorResponse().priorResponse();
@@ -732,45 +828,45 @@ public class PanCoreUtil {
 
 
     /**
-     * 公共头部Header
+     * 登录公共头部
      *
      * @return
      */
     public static Map<String, String> getMainHeader() {
-        Map header = new HashMap();
-        header.put("Host", "https://pan.baidu.com");
-        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
-        header.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
-        header.put("Accept-Language", "zh-CN,zh;q=0.9");
-        header.put("Upgrade-Insecure-Requests", "1");
-        header.put("Accept-Encoding", "gzip, deflate, br");
-        header.put("Connection", "keep-alive");
-        return header;
+        standard_headMap.put("Host", "https://pan.baidu.com");
+        standard_headMap.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+        standard_headMap.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+        standard_headMap.put("Accept-Language", "zh-CN,zh;q=0.9");
+        standard_headMap.put("Upgrade-Insecure-Requests", "1");
+        standard_headMap.put("Accept-Encoding", "gzip, deflate, br");
+        standard_headMap.put("Connection", "keep-alive");
+        return standard_headMap;
 
 
     }
 
     /**
+     * pan.baidu.com 请求接口公共头部
+     *
      * @return
      */
 
     public static Map<String, String> xmlHttpHead() {
-        Map header = new HashMap();
-        header.put("Host", "pan.baidu.com");
-        header.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
-        header.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
-        header.put("Accept", "application/json, text/javascript, */*; q=0.01");
-        header.put("Accept-Language", "zh-CN,zh;q=0.9");
-        header.put("X-Requested-With", "XMLHttpRequest");
-        header.put("Accept-Encoding", "gzip, deflate, br");
-        header.put("Connection", "keep-alive");
-        return header;
+        xml_headMap.put("Host", "pan.baidu.com");
+        xml_headMap.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
+        xml_headMap.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+        xml_headMap.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        xml_headMap.put("Accept-Language", "zh-CN,zh;q=0.9");
+        xml_headMap.put("X-Requested-With", "XMLHttpRequest");
+        xml_headMap.put("Accept-Encoding", "gzip, deflate, br");
+        xml_headMap.put("Connection", "keep-alive");
+        return xml_headMap;
     }
 
     /**
      * @param host
-     * @param apiUrl
      * @return
+     * @xml_headMap apiUrl
      */
     public static String subJStoJson(String JsStr) {
         int front = JsStr.indexOf("(");
@@ -805,7 +901,7 @@ public class PanCoreUtil {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
 
         //接口token 需要在 home 页面获取
 //Cookie: HOSUPPORT=1; UBI=fi_PncwhpxZ%7ETaO3i%7EsRfw7uBrZuVPHpzf4LHvUyVlzBBzX6KBTHc6ktfCJOWzUR8m8xZTU9inmsHvZ5XxS; HISTORY=0e797aedc109c72c2cb3043944fc878e21d59be6a5fc2367235701ea5f1bc2160db77be7c7c7; USERNAMETYPE=2; SAVEUSERID=8a6afe0028fdd25be6a57346794aa97df33d09d7; Hm_lvt_90056b3f84f90da57dc0f40150f005d5=1541151314,1541818780; pplogid=7509CqrqEbE3HtDnE%2BJ7JdKBzzRiuKvq4wJOLAyddJoVMF78sngFD6YBfdD%2FihKrQycT; BAIDUID=97E293FD8682A16BADCE0A05E09BED44:FG=1
@@ -876,25 +972,27 @@ public class PanCoreUtil {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        Map<String, String> mainHeader = new HashMap<>();
-        mainHeader.put("Host", "pan.baidu.com");
-        mainHeader.put("Referer", "https://pan.baidu.com/");
-        mainHeader.put("Connection", "keep-alive");
-        mainHeader.put("Accept-Encoding", "gzip, deflate, br");
-        mainHeader.put("Accept-Language", "zh-CN,zh;q=0.9");
-        mainHeader.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-        mainHeader.put("Upgrade-Insecure-Requests", "1");
-        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
-
-        mainHeader.put("Cookie", "BDUSS=EMxRDc0SVQtU3pMM0x6WHZ4cGhSWU5EU2lsSXo5c1l6N35Cdk5JVUtyTmxDdUJjRVFBQUFBJCQAAAAAA" +
-                "AAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                "AAAAAAAAAAAGV9uFxlfbhcN; pan_login_way=1; PANWEB=1; BAIDUID=77D3ABCE13E12DE3D4B5BA636CEFF11E:FG=1");
-        System.setProperty("https.protocols", "TLSv1");
-        Response response = getRequest("https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&stoken=XUsFlfd8pfx4adWmHDmWyxY%2FFjCuosSvm3kbrq%2FD5SXX7vEH4UVbzvHpZByh" +
-                "5UiEmxgJW0UYniUfe8joapLnZfiMhZP6FszF8sXMuU7gPHy95JGUgWcKpEpHZFkZpdJGsKEsCAHm%2B%2FJZXM0ke%2FYSTtdcyhXaNG%2BBT1qmcqwZRTEwj6x%2Fa%2F1Vsva4oZHtB" +
-                "fMgTnJ8xph4EqDpjurRA1YvnDVk7bDLLwE4707QiFAuM8WJXIX1PFmCXwd5LdvFjIv0SQFPgreaANXid" +
-                "T2kFO1bRg%3D%3D&bduss=&ssnerror=0&traceid=", "", null, mainHeader);
-        System.out.println(response.headers().toMultimap());
+//        Map<String, String> mainHeader = new HashMap<>();
+//        mainHeader.put("Host", "pan.baidu.com");
+//        mainHeader.put("Referer", "https://pan.baidu.com/");
+//        mainHeader.put("Connection", "keep-alive");
+//        mainHeader.put("Accept-Encoding", "gzip, deflate, br");
+//        mainHeader.put("Accept-Language", "zh-CN,zh;q=0.9");
+//        mainHeader.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+//        mainHeader.put("Upgrade-Insecure-Requests", "1");
+//        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+//
+//        mainHeader.put("Cookie", "BDUSS=EMxRDc0SVQtU3pMM0x6WHZ4cGhSWU5EU2lsSXo5c1l6N35Cdk5JVUtyTmxDdUJjRVFBQUFBJCQAAAAAA" +
+//                "AAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+//                "AAAAAAAAAAAGV9uFxlfbhcN; pan_login_way=1; PANWEB=1; BAIDUID=77D3ABCE13E12DE3D4B5BA636CEFF11E:FG=1");
+//        System.setProperty("https.protocols", "TLSv1");
+//        Response response = getRequest("https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&stoken=XUsFlfd8pfx4adWmHDmWyxY%2FFjCuosSvm3kbrq%2FD5SXX7vEH4UVbzvHpZByh" +
+//                "5UiEmxgJW0UYniUfe8joapLnZfiMhZP6FszF8sXMuU7gPHy95JGUgWcKpEpHZFkZpdJGsKEsCAHm%2B%2FJZXM0ke%2FYSTtdcyhXaNG%2BBT1qmcqwZRTEwj6x%2Fa%2F1Vsva4oZHtB" +
+//                "fMgTnJ8xph4EqDpjurRA1YvnDVk7bDLLwE4707QiFAuM8WJXIX1PFmCXwd5LdvFjIv0SQFPgreaANXid" +
+//                "T2kFO1bRg%3D%3D&bduss=&ssnerror=0&traceid=", "", null, mainHeader);
+//        System.out.println(response.headers().toMultimap());
+        String entx = getDownloadSign("e8c7d729eea7b54551aa594f942decbe", "1f40cabf1024572b56cf4af74adad7444c8e85bd");
+        System.out.println(entx);
 
 
     }

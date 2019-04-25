@@ -325,7 +325,7 @@ public class VisitApiUtil {
      * @throws UnsupportedEncodingException
      */
     public static String mapToPostStr(Map<String, String> inputMap) {
-        String res = null;
+        String res = "";
         if (inputMap != null && inputMap.size() > 0) {
             try {
                 // 头

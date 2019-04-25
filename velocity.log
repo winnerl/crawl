@@ -1,0 +1,93 @@
+fs_id=526056080704766
+md5=c6dfef6ba983b4efebc82091b76453cb
+path=/我的资源/刘惜君 - 我很快乐.mp3
+
+
+CURRACTIVITYCODE: ""
+ISFIRST: undefined
+ISSVIP: 0
+ISVIP: 0
+ISYEARVIP: 0
+LOGINSTATUS: 1
+MYAVATAR: "https://ss0.bdstatic.com/7Ls0a8Sm1A5BphGlnYG/sys/portrait/item/c9df1bcf.jpg"
+MYBDSTOKEN: "fd55b89df4a36046fc12c39fd5086a1b"
+MYBDUSS: "pansec_DCb740ccc5511e5e8fedcff06b081203-gbBt3I%2FqY4uknUbBPkKQ5v7QInmfU9lfHP50e0TnAjbik4MoXel99o5%2Fg6Kgp%2FS%2BThllnYGYN5p58vQyt%2ByhNlw7BSv8wri8N1RU24KwnvIDCQmZ%2BHog4lx586nikBhx%2BzBCWBjc8oAl17TT4fSJa%2BvGhekkwAYZgHjwAr1trRn0DV9QV0qpRN2eRjKo20IFW75%2FiX%2BdhJd67ffV2vYCRw7NfkOuN8pDj2TITROCsW%2BOc56109PrN1i0%2FFODzCOMi84kKGzNae7TKP9nc77wMg%3D%3D"
+MYNAME: "回忆太多不好理"
+MYUK: 3754657732
+QUOTAINFOS: {total: 1107027820544, used: 6213289568}
+SERVERTIME: 155618160777
+SHOWVIPAD: -1
+UINFO: undefined
+VIPENDTIME: -1
+activity_end_time: ""
+activity_status: 0
+faceStatus: 0
+pansuk: "3fXeHIPvSh8uUIsgkcDMmg"
+product: "yun"
+sampling: "sampling_test,disk_center_change,video_high_speed,disk_timeline"
+sharedir: 0
+sign1: "7963e6f1dcb442a2c83cec2b572a3cf1e2bff3cf"
+sign2: "function s(j,r){var a=[];var p=[];var o="";var v=j.length;for(var q=0;q<256;q++){a[q]=j.substr((q%v),1).charCodeAt(0);p[q]=q}for(var u=q=0;q<256;q++){u=(u+p[q]+a[q])%256;var t=p[q];p[q]=p[u];p[u]=t}for(var i=u=q=0;q<r.length;q++){i=(i+1)%256;u=(u+p[i])%256;var t=p[i];p[i]=p[u];p[u]=t;k=p[((p[i]+p[u])%256)];o+=String.fromCharCode(r.charCodeAt(q)^k)}return o};"
+sign3: "d76a889b6aafd3o87ac3bd56f4d4053a"
+sign4: "d76a889b6aafd3o87ac3bd56f4d4053a"
+sign5: "d76e889b6aafd3087ac3bd56f4d4053a"
+skinName: "white"
+source_entry_tip_message: "海量音频免费听"
+task_key: "2137657a7521de4bb81b474d64e5e085a6442f2c"
+task_time: 1556181606
+timestamp: 1556181607
+token: "5198Ojjw26KctcQlRLDK+4HHz/yWC2z4sV7G9apbGDH93oCuIgF839797/IQFpEmg024f8gD42VT1/BV2YQ+YRwGBzTLAV0HIyE2/UZf0GB3MtJG1L77EwwZHbBZHXZXU6ybQcNTai+GGMl0Wzm6CiF27KIbfjvr5lnlDpT6MdaK5aHO6q6EG5SwVIVkIUO0DOVeotlRk7H9Vz7t45BPLH6vIJAUk1kwwajYJddoP3pWFG2P9Ia2c+MwsSAfQD+qASKEU/S57uWCmjNY0h6oWYrELaJjtHyms3rt6g"
+volAutoup: "0"
+__proto__: Object
+
+
+
+elR4RXqKvqYEuZY9iZb1rXvRvmr7LpDZagYrOplk5RBLACFbrAe5Nw==
+
+
+dVl4Ey+L76cDuZA83pyh/CDQvmutfcHdblAqbMhi4RYdAiUL/gzjNA==
+
+
+CURRACTIVITYCODE: ""
+ISFIRST: undefined
+ISSVIP: 0
+ISVIP: 0
+ISYEARVIP: 0
+LOGINSTATUS: 1
+MYAVATAR: "https://ss0.bdstatic.com/7Ls0a8Sm1A5BphGlnYG/sys/portrait/item/c9df1bcf.jpg"
+MYBDSTOKEN: "fd55b89df4a36046fc12c39fd5086a1b"
+MYBDUSS: "pansec_DCb740ccc5511e5e8fedcff06b081203-JvYOuM545eCRRIlfs45ofmT76yMw1KjaRfJA4EHSTPLDt0qFkyZ4MO%2Bs4sxxCQbE7oI1jh%2FYhsdnMrBUKGdXe5032ScPtj6Kl4giTVOmDMae%2BbfJd%2FS8P1nmBVH%2BCTiWhW%2By9KcNtVbc3R5EK8fLZldA1HHOfFsxTVXAABR3M0EPNEoOjN9PZ5PoF1t8jm9A8Hx2hVIwdKqkQrFp55MWX6v14tLtZ%2BFc%2Bpn7pO6K%2Bo%2FsUF4YyBvo9qas6AMw7WMA9DxCYEKYZmVq8xY1FN%2BUyQ%3D%3D"
+MYNAME: "回忆太多不好理"
+MYUK: 3754657732
+QUOTAINFOS: {total: 1107027820544, used: 6213289568}
+SERVERTIME: 1556181933533
+SHOWVIPAD: -1
+UINFO: undefined
+VIPENDTIME: -1
+activity_end_time: ""
+activity_status: 0
+faceStatus: 0
+pansuk: "3fXeHIPvSh8uUIsgkcDMmg"
+product: "yun"
+sampling: "sampling_test,disk_center_change,video_high_speed,disk_timeline"
+sharedir: 0
+sign1: "846e0770ccd5c85c893b30cf1a37beb730f6489e"
+sign2: "function s(j,r){var a=[];var p=[];var o="";var v=j.length;for(var q=0;q<256;q++){a[q]=j.substr((q%v),1).charCodeAt(0);p[q]=q}for(var u=q=0;q<256;q++){u=(u+p[q]+a[q])%256;var t=p[q];p[q]=p[u];p[u]=t}for(var i=u=q=0;q<r.length;q++){i=(i+1)%256;u=(u+p[i])%256;var t=p[i];p[i]=p[u];p[u]=t;k=p[((p[i]+p[u])%256)];o+=String.fromCharCode(r.charCodeAt(q)^k)}return o};"
+sign3: "d76a889b6aafd3o87ac3bd56f4d4053a"
+sign4: "d76a889b6aafd3o87ac3bd56f4d4053a"
+sign5: "d76e889b6aafd3087ac3bd56f4d4053a"
+skinName: "white"
+source_entry_tip_message: "海量音频免费听"
+task_key: "386f312508f9a736ef2734d0e11c81fa166daf61"
+task_time: 1556181933
+timestamp: 1556181933
+token: "ad706tr2DTmpyG4ux9e+4VpO8XlhosgvOEox/PEtW0+l0YloxfBd0UC4c8T8xjp2gGu8AWXi2mKyRhYC/b+LwLNUHKN+zlr6+R56UU+3Yfuac1IUMT1VAnJMANgH4ElXwTwcrcr/ujXq+Ms28qjpqaOtwGQ0hDa3TQO8Eczu40KnXT3Dl67il21gP+vyRzdEpPyL4EnSUI2/aqXfbTJ6yTYbqPJoKPmY62BK5JCGcJy2pxRplL1KWdr61C23Ea4xmmcPoVvwgwpN0LmrSN7JLyurlez+hYk"
+volAutoup: "0"
+__proto__: Object
+
+
+elR4RXqKvqYEuZY9iZb1rXvRvmr7LpDZagYrOplk5RBLACFbrAe5Nw==
+
+elR4RXqKvqYEuZY9iZb1rXvRvmr7LpDZagYrOplk5RBLACFbrAe5Nw==
+
+elR4RXqKvqYEuZY9iZb1rXvRvmr7LpDZagYrOplk5RBLACFbrAe5Nw==
