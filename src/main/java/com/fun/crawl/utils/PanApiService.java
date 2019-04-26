@@ -120,6 +120,48 @@ public class PanApiService {
     }
 
     /**
+     *
+     *
+     * @return
+     */
+    public static String getVideoAdToken(String bdsToken, String path, String cookie) {
+        Map<String, String> parmsMap = new HashMap<>();
+        parmsMap.put("path", path);
+        parmsMap.put("type", "M3U8_FLV_264_480");
+        parmsMap.put("channel", "chunlei");
+        parmsMap.put("web", "1");
+        parmsMap.put("app_id", app_id);
+        parmsMap.put("bdstoken", bdsToken);
+        parmsMap.put("logid", "");
+        parmsMap.put("clienttype", "0");
+        parmsMap.put("startLogTime",   "");
+        parmsMap.put("vip", "1");
+        String res = PanCoreUtil.visit(PANHOST, "/api/streaming" , parmsMap, "GET", cookie);
+        JSONObject jsonObject = JSONObject.parseObject(res);
+        String adtoken=    jsonObject.getString("adToken");
+        return adtoken;
+    }
+
+
+
+    /**
+     *
+     *
+     * @return
+     */
+    public static String getVideoStream(String adToken, String path, String cookie) {
+        Map<String, String> parmsMap = new HashMap<>();
+        parmsMap.put("path", path);
+        parmsMap.put("type", "M3U8_FLV_264_480");
+        parmsMap.put("app_id", app_id);
+        parmsMap.put("adToken", adToken);
+        parmsMap.put("clienttype", "0");
+        parmsMap.put("vip", "1");
+        String res = PanCoreUtil.visit(PANHOST, "/api/streaming" , parmsMap, "GET", cookie);
+        return res;
+    }
+
+    /**
      * 获取下载路径第1部
      * 此时的sign必须要和时间相匹配才能获取
      *
@@ -164,7 +206,6 @@ public class PanApiService {
 
     /**
      * [{"type":3,"path":"/我的资源/刘惜君 - 我很快乐.mp3","fs_id":526056080704766,"category":2,"op_time":1556193152}]
-     * 获取下载路径
      *
      * @return
      */
@@ -298,10 +339,16 @@ public class PanApiService {
         fidles.add(477589954217336l);
 //        String timst = apiDownloadRecentReport(bdstoken, detail, cookie1);
         String a = "1556193143";
-        String s = apiDownloadURL(bdstoken, sign, fidles, 1556201475 + "", cookie);
+//        String s = apiDownloadURL(bdstoken, sign, fidles, 1556201475 + "", cookie);
 //        fs_id=
-        System.out.println(s);
+//        System.out.println(s);
+String path="/我的资源/34.720p.mp4";
 
+        String videoAdToken = getVideoAdToken(bdstoken, path, cookie);
+
+        String videoStream = getVideoStream(videoAdToken, path, cookie);
+
+        System.out.printf(videoStream);
 //        Response request = PanCoreUtil.getRequest("https://d.pcs.baidu.com/file/c6dfef6ba983b4efebc82091b76453cb?fid=3754657732-250528-526056080704766&rt=pr&sign=FDtAERVCY-DCb740ccc5511e5e8fedcff06b081203-nsaRaczEaRWqpT%2Bzv72VRgvot4M%3D&expires=8h&chkv=1&chkbd=1&chkpc=et&dp-logid=2640748955180820523&dp-callid=0&dstime=1556109556&r=429654111&vip=0&ext=.mp3"
 //                , "", null, mainHeader
 //        );
