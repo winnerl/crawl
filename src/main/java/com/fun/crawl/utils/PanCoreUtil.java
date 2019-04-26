@@ -31,7 +31,6 @@ public class PanCoreUtil {
 
     public static ConcurrentHashMap<String, String> standard_cookieMap = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, String> standard_headMap = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<String, String> xml_headMap = new ConcurrentHashMap<>();
 
     public static String standard_cookie = "";
     private static final OkHttpClient mOkHttpClient = new OkHttpClient().newBuilder()
@@ -223,7 +222,7 @@ public class PanCoreUtil {
             uilder.url(requestURL);
             if ("GET".equals(method.toUpperCase())) {
                 request = uilder.get().build();
-            }else if ("POST_FORM".equals(method.toUpperCase())) {
+            }else if ("POST_STRING".equals(method.toUpperCase())) {
                 FormBody.Builder builder = new FormBody.Builder();
                 //java 8 遍历map entry
 //                    requestMap.entrySet().forEach(key->builder.add(key.getKey(),requestMap.get(key.getValue())));
@@ -852,15 +851,16 @@ public class PanCoreUtil {
      */
 
     public static Map<String, String> xmlHttpHead() {
-        xml_headMap.put("Host", "pan.baidu.com");
-        xml_headMap.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
-        xml_headMap.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
-        xml_headMap.put("Accept", "application/json, text/javascript, */*; q=0.01");
-        xml_headMap.put("Accept-Language", "zh-CN,zh;q=0.9");
-        xml_headMap.put("X-Requested-With", "XMLHttpRequest");
-        xml_headMap.put("Accept-Encoding", "gzip, deflate, br");
-        xml_headMap.put("Connection", "keep-alive");
-        return xml_headMap;
+        Map<String,String> map= new HashMap<>();
+        map.put("Host", "pan.baidu.com");
+        map.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
+        map.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+        map.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        map.put("Accept-Language", "zh-CN,zh;q=0.9");
+        map.put("X-Requested-With", "XMLHttpRequest");
+        map.put("Accept-Encoding", "gzip, deflate, br");
+        map.put("Connection", "keep-alive");
+        return map;
     }
 
     /**
