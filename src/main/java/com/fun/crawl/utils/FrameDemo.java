@@ -130,6 +130,9 @@ class FrameDemo {
 
 //        System.out.println("------------PAN----STOKEN-----");
         String URL = PanCoreUtil.v3LoginAuthGetToken(null);
+        //获得文件STOKEN
+
+
         PanCoreUtil.diskHome();
 //        System.out.println(stoken);
         System.out.println(PanCoreUtil.standard_cookieMap);
@@ -138,13 +141,14 @@ class FrameDemo {
 //
         PanCoreUtil.sendTodiskHomeOne(URL);
         System.out.println(PanCoreUtil.standard_cookieMap);
+        PanCoreUtil. v3LoginAuthGetTokenForFileStoken(null);
         Map<String, String> map = PanCoreUtil.sendTodiskHomeTwo();
 
         String s = PanCoreUtil.mapToJson(map, false);
 //        System.out.println(PanCoreUtil.standard_cookieMap);
 //        System.out.println("---- HOU--cookeMap-----");
         String bdstoken = map.get("bdstoken");
-        
+
         System.out.println(bdstoken);
         System.out.println(s);
         List<FileExtend> time = PanApiService.list(bdstoken, 1, 10, "/", "time", 1, 0, PanCoreUtil.standard_cookie);

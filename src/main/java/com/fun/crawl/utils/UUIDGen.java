@@ -50,7 +50,16 @@ public class UUIDGen {
 		int m = (int)(Math.random()*900+100);
 		return String.valueOf(m);
 	}
-	
+
+	/**
+	 * 随机生成3位数字
+	 * @return
+	 */
+	public static String getFourRandom(){
+		int m = (int)(Math.random()*900+100);
+		return String.valueOf(m)+"V";
+	}
+
 	/**
 	 * 生成唯一编号
 	 * @return
