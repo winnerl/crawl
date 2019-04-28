@@ -1,5 +1,6 @@
 package com.fun.crawl.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fun.crawl.model.FileExtend;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -121,7 +122,15 @@ class FrameDemo {
             }
         }
         Map<String, String> v3map = PanCoreUtil.v3Login(v3Bduss, null);
+
+        String data = v3map.get("data");
+
+        JSONObject jsonObject=JSONObject.parseObject(data);
+        String hao123ParamUrl = jsonObject.getString("hao123Param");
+
+
         System.out.println(v3map);
+         v3map = PanCoreUtil.apiSys(hao123ParamUrl, null);
         System.out.println("------cookeMap-----1");
         System.out.println(PanCoreUtil.standard_cookieMap);
 //        System.out.println("------cookie-----");

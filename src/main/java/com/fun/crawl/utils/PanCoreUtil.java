@@ -707,6 +707,9 @@ public class PanCoreUtil {
         return null;
     }
 
+
+
+
     /**
      * pan.baidu.com
      * 第4步，https://passport.baidu.com/v3/login/api/auth/?return_type=5&tpl=netdisk&u=https%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome
@@ -899,6 +902,45 @@ public class PanCoreUtil {
     }
 
 
+
+    public static Map<String, String> apiSys(String hao123ParamUrl,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("bdu", hao123ParamUrl);
+        params.put("t", System.currentTimeMillis() + "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Host", "ckpass.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/");
+        Response response = getRequest("https://ckpass.baidu.com", "/api/sync", params, null);
+        System.out.println(response);
+        return null;
+    }
+
+    public static Map<String, String> statistics(String hao123ParamUrl,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("clienttype", "0");
+        params.put("version", "v5");
+        params.put("op", "download");
+        params.put("type", "webdownload");
+        params.put("from", "dlink");
+        params.put("product", "pan");
+        params.put("success", "1");
+        params.put("reason", "0");
+        params.put("ajaxstatus", "200");
+        params.put("ajaxurl", "/api/download");
+        params.put("ajaxdata", "\"success\"");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "image/webp,*/*");
+        headers.put("Host", "update.pan.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
+        Response response = getRequest("https://update.pan.baidu.com", "/statistics", params, null);
+        return null;
+    }
+
+
     public static String v3LoginAuthGetTokenForFileStoken(Map<String, String> headers) {
         if (headers == null) {
             headers = getMainHeader();
@@ -945,31 +987,31 @@ public class PanCoreUtil {
 
 //
 //            /**           再次请求   */
-//            headers.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
-//            headers.put("Accept", " image/webp,image/apng,image/*,*/*;q=0.8");
-//            headers.put("Cookie", f_Cookie);
-//
-//            //获取pscset
-//            uilder = new Request.Builder();
-//            if (headers != null) {
-//                for (Map.Entry<String, String> header : headers.entrySet()) {
-//                    uilder.addHeader(header.getKey(), header.getValue());
-//                }
-//            }
-//            uilder.url("https://pcs.baidu.com/rest/2.0/pcs/file?method=plantcookie&type=ett");
-//            request = uilder.get().build();
-//            response = execute(request);
-//            Headers head = response.headers();
-//            if (head.values("Set-Cookie") != null && head.values("Set-Cookie").size() > 0) {
-//                for (String value : head.values("Set-Cookie")) {
-//                    String[] temparray = value.split("; ");
-//                    String[] sp = temparray[0].split("=", 2);
-//                        standard_cookieMap.put(sp[0], sp[1]);
-//                        if (sp[0].equals("pcsett")){
-//                            f_Cookie += sp[0] + "=" + sp[1] + ";";
-//                        }
-//                }
-//            }
+            headers.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
+            headers.put("Accept", " image/webp,image/apng,image/*,*/*;q=0.8");
+            headers.put("Cookie", f_Cookie);
+
+            //获取pscset
+            uilder = new Request.Builder();
+            if (headers != null) {
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    uilder.addHeader(header.getKey(), header.getValue());
+                }
+            }
+            uilder.url("https://pcs.baidu.com/rest/2.0/pcs/file?method=plantcookie&type=ett");
+            request = uilder.get().build();
+            response = execute(request);
+            Headers head = response.headers();
+            if (head.values("Set-Cookie") != null && head.values("Set-Cookie").size() > 0) {
+                for (String value : head.values("Set-Cookie")) {
+                    String[] temparray = value.split("; ");
+                    String[] sp = temparray[0].split("=", 2);
+                        standard_cookieMap.put(sp[0], sp[1]);
+                        if (sp[0].equals("pcsett")){
+                            f_Cookie += sp[0] + "=" + sp[1] + ";";
+                        }
+                }
+            }
 
 
 //            OkHttpClient client = new OkHttpClient();
@@ -1018,7 +1060,7 @@ public class PanCoreUtil {
 
             response = execute(request);
 
-            Headers   head = response.headers();
+               head = response.headers();
             String tempcookie = "";
             if (head.values("Set-Cookie") != null && head.values("Set-Cookie").size() > 0) {
                 for (String value : head.values("Set-Cookie")) {
@@ -1298,5 +1340,6 @@ public class PanCoreUtil {
         Response response = client.newCall(request).execute();
         System.out.println(response);
     }
+
 
 }
