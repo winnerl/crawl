@@ -1,5 +1,6 @@
 package com.fun.crawl.utils;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.lang.StringUtils;
@@ -912,12 +913,179 @@ public class PanCoreUtil {
         }
         headers.put("Host", "ckpass.baidu.com");
         headers.put("Referer", "https://pan.baidu.com/");
-        Response response = getRequest("https://ckpass.baidu.com", "/api/sync", params, null);
+        Response response = getRequest("https://ckpass.baidu.com", "/api/sync", params, headers);
         System.out.println(response);
         return null;
     }
 
-    public static Map<String, String> statistics(String hao123ParamUrl,  Map<String, String> headers) {
+    public static Map<String, String> cmsdata(String bdsToken,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("do", "download");
+        params.put("_", ""+System.currentTimeMillis());
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.put("Accept-Encoding", "gzip, deflate, br");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        headers.put("Cookie", standard_cookie);
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Host", "pan.baidu.com");
+        Response response = getRequest(PHOST, "/disk/cmsdata", params, headers);
+        return null;
+    }
+    public static Map<String, String> cmsdata2(String bdsToken,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("do", "manual");
+        params.put("ch", "download_limit");
+        params.put("_", ""+System.currentTimeMillis());
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.put("Accept-Encoding", "gzip, deflate, br");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        headers.put("Cookie", standard_cookie);
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Host", "pan.baidu.com");
+        Response response = getRequest(PHOST, "/disk/cmsdata", params, headers);
+        return null;
+    }
+
+    public static Map<String, String> en3(String bdsToken,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.put("Accept-Encoding", "gzip, deflate, br");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        headers.put("Cookie", standard_cookie);
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Host", "pan.baidu.com");
+        Response response = getRequest(PHOST, "/enterprise/user/check", params, headers);
+        return null;
+    }
+
+    public static Map<String, String> refresh(String bdsToken,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("force", "1");
+        params.put("setread", "0");
+        params.put("begin", ""+System.currentTimeMillis());
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.put("Accept-Encoding", "gzip, deflate, br");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        headers.put("Cookie", standard_cookie);
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Host", "pan.baidu.com");
+        Response response = getRequest(PHOST, "/pcloud/counter/refreshcount", params, headers);
+        return null;
+    }
+
+    public static Map<String, String> diffall(String bdsToken,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("message", "2");
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.put("Accept-Encoding", "gzip, deflate, br");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        headers.put("Cookie", standard_cookie);
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Host", "pan.baidu.com");
+        Response response = getRequest(PHOST, "/api/diffall", params, headers);
+        return null;
+    }
+
+    public static Map<String, String> reportUser(String bdsToken,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+
+
+        String getString = PanCoreUtil.mapToGetString(params, true);
+
+
+        Map<String, String> postMap = new HashMap<>();
+        postMap.put("timestamp",System.currentTimeMillis()/1000+"");
+        postMap.put("action","web_home");
+
+        headers.put("Accept", "*/*");
+        headers.put("Accept-Encoding", "gzip, deflate, br");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        headers.put("Cookie", standard_cookie);
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Host", "pan.baidu.com");
+        visit(PHOST, "/api/report/user"+getString, postMap, "POST_PARM",standard_cookie,headers);
+        return null;
+    }
+
+
+    public static Map<String, String> membership(String bdsToken,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("method", "query");
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        Map<String, String> postMap = new HashMap<>();
+        postMap.put("user_id",1+"");
+
+        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        String getString = PanCoreUtil.mapToGetString(params, true);
+         visit(PHOST, "/rest/2.0/membership/isp"+getString, postMap, "POST_PARM",standard_cookie,headers);
+        return null;
+    }
+
+
+    public static Map<String, String> statistics(  Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("clienttype", "0");
         params.put("version", "v5");
@@ -936,7 +1104,8 @@ public class PanCoreUtil {
         headers.put("Accept", "image/webp,*/*");
         headers.put("Host", "update.pan.baidu.com");
         headers.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
-        Response response = getRequest("https://update.pan.baidu.com", "/statistics", params, null);
+        headers.put("Cookie", standard_cookie);
+        Response response = getRequest("https://update.pan.baidu.com", "/statistics", params, headers);
         return null;
     }
 
@@ -1114,7 +1283,7 @@ public class PanCoreUtil {
      * @return
      */
     public static Map<String, String> getMainHeader() {
-        standard_headMap.put("Host", "https://pan.baidu.com");
+        standard_headMap.put("Host", "pan.baidu.com");
         standard_headMap.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
         standard_headMap.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
         standard_headMap.put("Accept-Language", "zh-CN,zh;q=0.9");

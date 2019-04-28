@@ -131,6 +131,9 @@ class FrameDemo {
 
         System.out.println(v3map);
          v3map = PanCoreUtil.apiSys(hao123ParamUrl, null);
+
+
+
         System.out.println("------cookeMap-----1");
         System.out.println(PanCoreUtil.standard_cookieMap);
 //        System.out.println("------cookie-----");
@@ -153,10 +156,15 @@ class FrameDemo {
         PanCoreUtil. v3LoginAuthGetTokenForFileStoken(null);
         Map<String, String> map = PanCoreUtil.sendTodiskHomeTwo();
 
+
         String s = PanCoreUtil.mapToJson(map, false);
 //        System.out.println(PanCoreUtil.standard_cookieMap);
 //        System.out.println("---- HOU--cookeMap-----");
         String bdstoken = map.get("bdstoken");
+
+        PanCoreUtil.reportUser(bdstoken,null);
+
+        PanCoreUtil.cmsdata(bdstoken,null);
 
         System.out.println(bdstoken);
         System.out.println(s);
