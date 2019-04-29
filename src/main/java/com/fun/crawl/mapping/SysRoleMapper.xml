@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fun.crawl.mapper.SysRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fun.crawl.model.SysRole">
+        <id column="role_id" property="roleId"/>
+        <result column="role_code" property="roleCode"/>
+        <result column="role_name" property="roleName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+       role_id, role_code, role_name, create_time, modify_time, del_flag
+    </sql>
+    <select id="pageByQuery" resultMap="BaseResultMap">
+        select role_id, role_code, role_name, create_time, modify_time, del_flag
+        from sys_role
+        <where>
+            <if test="roleId !=null and roleId!=''">
+                and role_id = #{ roleId}
+            </if>
+            <if test="roleCode !=null and roleCode!=''">
+                and role_code = #{ roleCode}
+            </if>
+            <if test="roleName !=null and roleName!=''">
+                and role_name = #{ roleName}
+            </if>
+            <if test="createTime !=null and createTime!=''">
+                and create_time = #{ createTime}
+            </if>
+            <if test="modifyTime !=null and modifyTime!=''">
+                and modify_time = #{ modifyTime}
+            </if>
+            <if test="delFlag !=null and delFlag!=''">
+                and del_flag = #{ delFlag}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

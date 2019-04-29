@@ -17,6 +17,20 @@ spring:
     password: 123456
     hikari:
       minimum-idle: 0
+
+#  redis 配置
+  redis:
+    host: 112.74.190.171
+    port: 6379
+    password: ksdtest217
+    timeout: 3000
+    database: 5
+    pool:
+      minIdle: 0
+      maxIdle: 8
+      maxWait: -1
+      maxActive: 8
+
 #mybatis-plus相关配置
 mybatis-plus:
   mapper-locations: classpath:com/fun/crawl/mapping/*.xml
@@ -50,4 +64,20 @@ mybatis-plus:
     cache-enabled: false
     #配置JdbcTypeForNull, oracle数据库必须配置
     jdbc-type-for-null: 'null'
+
+
+
+ignore:
+  urls:
+  - /**/*.css
+  - /auth/**
+  - /actuator/**
+  - /admin/user/**
+  - /admin/resource/**
+  - /admin/role/**
+  - /refresh/**
+  - /swagger-ui.html
+  - /swagger-resources/**
+  - /v2/api-docs
+  - /webjars/**
 

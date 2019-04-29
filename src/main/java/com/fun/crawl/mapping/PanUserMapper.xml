@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fun.crawl.mapper.PanUserMapper">
+
+<!-- 通用查询映射结果 -->
+<resultMap id="BaseResultMap" type="com.fun.crawl.model.PanUser">
+    <id column="id" property="id"/>
+        <result column="uid" property="uid"/>
+      <result column="uk" property="uk"/>
+      <result column="pan_name" property="panName"/>
+      <result column="cookie" property="cookie"/>
+      <result column="headers" property="headers"/>
+      <result column="jsons" property="jsons"/>
+      <result column="create_time" property="createTime"/>
+      <result column="modify_time" property="modifyTime"/>
+  </resultMap>
+
+<!-- 通用查询结果列 -->
+<sql id="Base_Column_List">
+       id, uid, uk, pan_name, cookie, headers, jsons, create_time, modify_time
+</sql>
+<select id="pageByQuery" resultMap="BaseResultMap">
+    select     id, uid, uk, pan_name, cookie, headers, jsons, create_time, modify_time
+    from t_pan_user
+    <where>
+        <if test="id !=null and id!=''">
+           and id = #{ id}
+        </if>
+        <if test="uid !=null and uid!=''">
+           and uid = #{ uid}
+        </if>
+        <if test="uk !=null and uk!=''">
+           and uk = #{ uk}
+        </if>
+        <if test="panName !=null and panName!=''">
+           and pan_name = #{ panName}
+        </if>
+        <if test="cookie !=null and cookie!=''">
+           and cookie = #{ cookie}
+        </if>
+        <if test="headers !=null and headers!=''">
+           and headers = #{ headers}
+        </if>
+        <if test="jsons !=null and jsons!=''">
+           and jsons = #{ jsons}
+        </if>
+        <if test="createTime !=null and createTime!=''">
+           and create_time = #{ createTime}
+        </if>
+        <if test="modifyTime !=null and modifyTime!=''">
+           and modify_time = #{ modifyTime}
+        </if>
+    </where>
+</select>
+
+
+</mapper>

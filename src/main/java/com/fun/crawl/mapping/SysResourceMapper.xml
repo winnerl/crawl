@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fun.crawl.mapper.SysResourceMapper">
+
+<!-- 通用查询映射结果 -->
+<resultMap id="BaseResultMap" type="com.fun.crawl.model.SysResource">
+    <id column="id" property="id"/>
+        <result column="name" property="name"/>
+      <result column="type" property="type"/>
+      <result column="path" property="path"/>
+      <result column="permission" property="permission"/>
+      <result column="color" property="color"/>
+      <result column="parent_id" property="parentId"/>
+      <result column="icon" property="icon"/>
+      <result column="component" property="component"/>
+      <result column="sort" property="sort"/>
+      <result column="create_time" property="createTime"/>
+      <result column="modify_time" property="modifyTime"/>
+      <result column="del_flag" property="delFlag"/>
+      <result column="url" property="url"/>
+      <result column="method" property="method"/>
+  </resultMap>
+
+<!-- 通用查询结果列 -->
+<sql id="Base_Column_List">
+       id, name, type, path, permission, color, parent_id, icon, component, sort, create_time, modify_time, del_flag, url, method
+</sql>
+<select id="pageByQuery" resultMap="BaseResultMap">
+    select     id, name, type, path, permission, color, parent_id, icon, component, sort, create_time, modify_time, del_flag, url, method
+    from sys_resource
+    <where>
+        <if test="id !=null and id!=''">
+           and id = #{ id}
+        </if>
+        <if test="name !=null and name!=''">
+           and name = #{ name}
+        </if>
+        <if test="type !=null and type!=''">
+           and type = #{ type}
+        </if>
+        <if test="path !=null and path!=''">
+           and path = #{ path}
+        </if>
+        <if test="permission !=null and permission!=''">
+           and permission = #{ permission}
+        </if>
+        <if test="color !=null and color!=''">
+           and color = #{ color}
+        </if>
+        <if test="parentId !=null and parentId!=''">
+           and parent_id = #{ parentId}
+        </if>
+        <if test="icon !=null and icon!=''">
+           and icon = #{ icon}
+        </if>
+        <if test="component !=null and component!=''">
+           and component = #{ component}
+        </if>
+        <if test="sort !=null and sort!=''">
+           and sort = #{ sort}
+        </if>
+        <if test="createTime !=null and createTime!=''">
+           and create_time = #{ createTime}
+        </if>
+        <if test="modifyTime !=null and modifyTime!=''">
+           and modify_time = #{ modifyTime}
+        </if>
+        <if test="delFlag !=null and delFlag!=''">
+           and del_flag = #{ delFlag}
+        </if>
+        <if test="url !=null and url!=''">
+           and url = #{ url}
+        </if>
+        <if test="method !=null and method!=''">
+           and method = #{ method}
+        </if>
+    </where>
+</select>
+
+
+    <select id="findResourceByRoleCode" resultMap="BaseResultMap">
+        select
+          sres.*
+        from
+          sys_role as sr
+          left join sys_role_resource as srr on sr.role_id = srr.role_id
+          left join sys_resource as sres on srr.resource_id = sres.id
+        where
+          sr.del_flag = 0
+            and
+          sres.del_flag = 0
+            and
+          sr.role_code = #{roleCode}
+          order by sres.sort desc, sres.create_time desc
+    </select>
+
+</mapper>
