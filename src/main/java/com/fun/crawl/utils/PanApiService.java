@@ -210,7 +210,7 @@ public class PanApiService {
      *
      * @return
      */
-    public static String garbageguid(String bdsToken, List<Garbageguid> fileList,  String cookie) {
+    public static String garbageguid(String bdsToken, List<Garbageguid> fileList, String cookie) {
         Map<String, String> parmsMap = new HashMap<>();
         parmsMap.put("channel", "chunlei");
         parmsMap.put("web", "1");
@@ -233,6 +233,50 @@ public class PanApiService {
      * @return
      */
     public static String apiDownloadURL(String bdsToken, String sign, List<Long> fidlist, String timestamp, String cookie) {
+//
+//        String sss=System.currentTimeMillis()/1000+"";
+//        Map<String, String> asMap = new HashMap<>();
+//        asMap.put("channel", "chunlei");
+//        asMap.put("method", "listhost");
+//        asMap.put("t", System.currentTimeMillis()/1000+"");
+//        asMap.put("_", sss);
+//        asMap.put("clienttype", "0");
+//        asMap.put("callback", "jQuery112403285207257949123_" + sss);
+//        String aString = PanCoreUtil.mapToGetString(asMap, true);
+//
+//        Map<String, String> mapaa = new HashMap<>();
+//        String[] AA = cookie.split(";");
+//        for (int i = 0; i < AA.length; i++) {
+//            String s1 = AA[i];
+//            String[] split2 = s1.split("=");
+//            if (!split2.equals("STOKEN")) {
+//                if (split2[0].contains("FILE_")) {
+//                    mapaa.put(split2[0].replace("FILE_", ""), split2[1]);
+//                } else {
+//                    mapaa.put(split2[0], split2[1]);
+//                }
+//            }
+//        }
+//        String tempAAAcookie = "";
+//        Set<String> kAs = mapaa.keySet();
+//        Iterator<String> iAt = kAs.iterator();
+//        while (iAt.hasNext()) {
+//            String skey = iAt.next();
+//            String value = mapaa.get(skey);
+//            tempAAAcookie += skey + "=" + value + ";";
+//        }
+//
+//                Map<String, String> mainaaHeader = new HashMap<>();
+//        mainaaHeader.put("Host", "d.pcs.baidu.com");
+//        mainaaHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+//        mainaaHeader.put("Accept", " */*");
+//        mainaaHeader.put("Accept-Encoding", "gzip, deflate, br");
+//        mainaaHeader.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+//        mainaaHeader.put("Referer", "https://pan.baidu.com/disk/home?");
+//        mainaaHeader.put("Connection", "keep-alive");
+//
+//        String get = PanCoreUtil.visit("https://d.pcs.baidu.com", "/rest/2.0/pcs/manage" + aString, null, "GET", tempAAAcookie, mainaaHeader);
+//        System.out.println(get);
         Map<String, String> parmsMap = new HashMap<>();
         parmsMap.put("channel", "chunlei");
         parmsMap.put("web", "1");
@@ -255,74 +299,64 @@ public class PanApiService {
         JSONObject dlink = (JSONObject) dlinks.get(0);
         String dlinkUrl = dlink.getString("dlink");
 
+        String replace = dlinkUrl.replace("d.pcs.baidu.com", "nj02cm01.baidupcs.com");
+//        Map<String, String> mainHeader = new HashMap<>();
+//        mainHeader.put("chrome-proxy", "frfr");
+//        mainHeader.put("Host", "d.pcs.baidu.com");
+//        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+//        mainHeader.put("Accept", " text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+//        mainHeader.put("Accept-Encoding", "gzip, deflate, br");
+//        mainHeader.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+//        mainHeader.put("Referer", "https://pan.baidu.com/disk/home?");
+//        mainHeader.put("Connection", "keep-alive");
+//        mainHeader.put("Range", "bytes=0-");
+//        mainHeader.put("Upgrade-Insecure-Requests", "1");
+//
+//        Map<String, String> mapa = new HashMap<>();
+//        String[] split1 = cookie.split(";");
+//        for (int i = 0; i < split1.length; i++) {
+//            String s1 = split1[i];
+//            String[] split2 = s1.split("=");
+//            if (!split2.equals("STOKEN")) {
+//                if (split2[0].contains("FILE_")) {
+//                    mapa.put(split2[0].replace("FILE_", ""), "");
+//                } else {
+//                    mapa.put(split2[0], split2[1]);
+//                }
+//            }
+//        }
+//        String tempcookie = "";
+//        Set<String> ks = mapa.keySet();
+//        Iterator<String> it = ks.iterator();
+//        while (it.hasNext()) {
+//            String skey = it.next();
+//            String value = mapa.get(skey);
+//            tempcookie += skey + "=" + value + ";";
+//        }
+//
+//
+//        Request request = new Request.Builder()
+//                .url(dlinkUrl).get()
+//                .addHeader("Host", "d.pcs.baidu.com")
+//                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0")
+//                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+//                .addHeader("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
+//                .addHeader("Accept-Encoding", "gzip, deflate, br")
+//                .addHeader("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=")
+//                .addHeader("Connection", "keep-alive")
+////                .addHeader("Cookie", tempcookie
+//                .addHeader("Cookie", "BDUSS=WN5dEtCTExlbzY3SUlKc3Z-NVNaUUZ1U353V1MtQzUwQ1Z2YW9Yb1RlLW0tLXRjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKZuxFymbsRcY;")
+//
+//                .addHeader("Upgrade-Insecure-Requests", "1")
+//                .build();
+//        try {
+//            OkHttpClient client = new OkHttpClient();
+//            Response response = client.newCall(request).execute();
+//            System.out.println(response.body().string());
+//        } catch (IOException e) {
+//        }
 
-        Map<String, String> mainHeader = new HashMap<>();
-        mainHeader.put("chrome-proxy", "frfr");
-        mainHeader.put("Host", "d.pcs.baidu.com");
-        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
-        mainHeader.put("Accept", " text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        mainHeader.put("Accept-Encoding", "gzip, deflate, br");
-        mainHeader.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
-        mainHeader.put("Referer", "https://pan.baidu.com/disk/home?");
-        mainHeader.put("Connection", "keep-alive");
-        mainHeader.put("Range", "bytes=0-");
-        mainHeader.put("Upgrade-Insecure-Requests", "1");
-
-        Map<String, String> mapa = new HashMap<>();
-        String[] split1 = cookie.split(";");
-        for (int i = 0; i < split1.length; i++) {
-            String s1 = split1[i];
-            String[] split2 = s1.split("=");
-            if (!split2.equals("STOKEN")) {
-                if (split2[0].contains("FILE_")) {
-                    mapa.put(split2[0].replace("FILE_", ""), split2[1]);
-                } else {
-                    mapa.put(split2[0], split2[1]);
-                }
-            }
-        }
-        String tempcookie = "";
-        Set<String> ks = mapa.keySet();
-        Iterator<String> it = ks.iterator();
-        while (it.hasNext()) {
-            String skey = it.next();
-            String value = mapa.get(skey);
-            tempcookie += skey + "=" + value + ";";
-        }
-        cookie = tempcookie;
-        mainHeader.put("Cookie", cookie);
-//        System.out.println(cookie);
-//        PanCoreUtil.membership(bdsToken, null);
-//        PanCoreUtil.statistics(null);
-//        PanCoreUtil.cmsdata(bdsToken, null);
-//        PanCoreUtil.cmsdata2(bdsToken, null);
-//        PanCoreUtil.en3(bdsToken, null);
-//        PanCoreUtil.refresh(bdsToken, null);
-//        PanCoreUtil.diffall(bdsToken, null);
-//        PanCoreUtil.reportUser(bdsToken, null);
-
-
-        Request request = new Request.Builder()
-                .url(dlinkUrl).get()
-                .addHeader("Host", "d.pcs.baidu.com")
-                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0")
-                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .addHeader("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
-                .addHeader("Accept-Encoding", "gzip, deflate, br")
-                .addHeader("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("Cookie", cookie)
-                .addHeader("Upgrade-Insecure-Requests", "1")
-                .build();
-        try {
-            OkHttpClient client = new OkHttpClient();
-            Response response = client.newCall(request).execute();
-            System.out.println(response.body().string());
-            return response.headers().get("Location");//是重定向URL
-        } catch (IOException e) {
-        }
-
-        return dlinkUrl;
+        return replace;
     }
 
     /**
@@ -433,11 +467,13 @@ public class PanApiService {
     }
 
     public static void main(String[] args) throws IOException {
-        String bdstoken = "440ee6a3018801c5e0f3ddfacededd44";
-//        {"flag":"1","vip_end_time":"null","file_list":"null","task_time":"1556443605","sign2":"function s(j,r){var a=[];var p=[];var o=\"\";var v=j.length;for(var q=0;q<256;q++){a[q]=j.substr((q%v),1).charCodeAt(0);p[q]=q}for(var u=q=0;q<256;q++){u=(u+p[q]+a[q])%256;var t=p[q];p[q]=p[u];p[u]=t}for(var i=u=q=0;q<r.length;q++){i=(i+1)%256;u=(u+p[i])%256;var t=p[i];p[i]=p[u];p[u]=t;k=p[((p[i]+p[u])%256)];o+=String.fromCharCode(r.charCodeAt(q)^k)}return o};","sign1":"c45c220d07a6a0df99a9086c981dea9916cefc33","sign3":"d76e889b6aafd3087ac3bd56f4d4053a","vol_autoup":"0","uk":"3754657732","is_auto_svip":"0","is_evip":"0","bdstoken":"440ee6a3018801c5e0f3ddfacededd44","timestamp":"1556443605","is_svip":"0","activity_end_time":"0","sharedir":"1","pansuk":"3fXeHIPvSh8uUIsgkcDMmg","is_vip":"0","loginstate":"1","sampling":"{\"expvar\":[\"sampling_test\",\"disk_center_change\",\"video_high_speed\",\"disk_timeline\"]}","need_tips":"null","photo":"https:\/\/ss0.bdstatic.com\/7Ls0a8Sm1A5BphGlnYG\/sys\/portrait\/item\/c9df1bcf.jpg","timeline_status":"1","face_status":"0","curr_activity_code":"0","urlparam":"[]","token":"8813MC3+IJsk0tSUraTEEDFOTVjmUHs\/+\/2MKP0Gaf79as4y5urflz3SDnHz7hVwjoWSJpLO5lTtrqur0e13MyjD1eQPcrGVgYuBhzFkcpyfEwIlqsH83Ih29tVD7L+fRIH0WrpkMaEsY0JxujelbNcBW74EK\/RAmJy5wgeLGhfaSDHyRVxKMSgTc92UuzWeH95TG\/m3NJlM3ls21QPFFVs1EGS\/a8myntwXSSY4MXqfP7PG1nFF\/W4tIJEzD9zwCnxSlGA3BbhUSbTLCj0VAsbWgbH6HN4r","XDUSS":"pansec_DCb740ccc5511e5e8fedcff06b081203-cDh95AoxkFLxgjlqd%2F2idd9XgQROndsLkJU3CLn0GMddX6W3ooMKAxw34LgBTa%2FO0KsyUXB5Zz4a4kyWzr9bfDObiIf1xolR%2FZUhoWRYhvn%2FyTeZNGyFu7EAYbniB5W3TNiwIpw%2FUsHKgvlYQyBQGOYa6qHbaUTZGn4evThzm8hqm44%2FQhv1pmV3nK37JSPT4eoAXJEo3dw8YmWBITxAmencDiiQ8B4ZMhORGomIeFYzZl40GycFoKkt18dL%2F%2FR79CV7MUcT%2FBmrz8vgkXe2KA%3D%3D","third":"0","show_vip_ad":"0","task_key":"01e0b42b6f11ede4ae0e5925d00b3305de34045a","applystatus":"1","bt_paths":"null","source_entry_tip_message":"海量音频免费听","srv_ts":"1556443605","is_year_vip":"0","activity_status":"0","username":"回忆太多不好理"}
+        String bdstoken = "c728d3ca6e611595dea2482b565e7419";
+//        {"flag":"1","vip_end_time":"null","file_list":"null","task_time":"1556454381","sign2":"function s(j,r){var a=[];var p=[];var o=\"\";var v=j.length;for(var q=0;q<256;q++){a[q]=j.substr((q%v),1).charCodeAt(0);p[q]=q}for(var u=q=0;q<256;q++){u=(u+p[q]+a[q])%256;var t=p[q];p[q]=p[u];p[u]=t}for(var i=u=q=0;q<r.length;q++){i=(i+1)%256;u=(u+p[i])%256;var t=p[i];p[i]=p[u];p[u]=t;k=p[((p[i]+p[u])%256)];o+=String.fromCharCode(r.charCodeAt(q)^k)}return o};","sign1":"000fcaf8ddc345d9701a675f1af6d825db420c12","sign3":"d76e889b6aafd3087ac3bd56f4d4053a","vol_autoup":"0","uk":"3754657732","is_auto_svip":"0","is_evip":"0","bdstoken":"c728d3ca6e611595dea2482b565e7419","timestamp":"1556454381","is_svip":"0","activity_end_time":"0","sharedir":"1","pansuk":"3fXeHIPvSh8uUIsgkcDMmg","is_vip":"0","loginstate":"1","sampling":"{\"expvar\":[\"sampling_test\",\"disk_center_change\",\"video_high_speed\",\"disk_timeline\"]}","need_tips":"null","photo":"https:\/\/ss0.bdstatic.com\/7Ls0a8Sm1A5BphGlnYG\/sys\/portrait\/item\/c9df1bcf.jpg","timeline_status":"1","face_status":"0","curr_activity_code":"0","urlparam":"[]","token":"63cc4VT\/nys5zFXDlvKjhXe\/AyFcQYOp0RxgKJeMJ9DiActmYxu\/OQiQNS+M2SlZyrHyTD85DUo2vS4CV3IQ+qVl6qkNh6iyUGe+c85\/oKMwEGjMEsa2X5Ud7wDWXumrrlCwxLrdx16VY5iapIPxZP0j1zwgVjRZGQvC4KJstGj+6YvpbUSrWkTHqYlbQmecBzsScgxh7GXJxJmuhDh5TDvpZnfMpH22WOxLQ5qurQ+MHVlh+iYDCpRKNRZTwvrvrwleDTM+b3bUtaAkGElChPAikp\/vsRhh","XDUSS":"pansec_DCb740ccc5511e5e8fedcff06b081203-EMSYx%2FtAuBSKIp6WfL6WPPsERLnln0THbB9kGqyU4sqppCC2MP4TcU%2BDAMW4yk69q3%2FwPQil01ajqN%2BMZ4J71GkS4lVpCzcEfUIxxizbI2r6tdNbVkalH45SQ14synys0WTOJScpV58DpC6D77ulYMzgDfWkMHWJNqW4IDVXyT%2FUPEsyEqGLz1reFvYVNbVLR9OfzSDNmzzqZVaX09GFK1I9uGxrC5ZPM6Hz2qSM7L2D1aPYXgvtyEmibas4MLXnLyGAdtJIzUZ7A1F9fESDPw%3D%3D","third":"0","show_vip_ad":"0","task_key":"cc9ecab7dc492082bb170c0ddf0a8bee7ebb0d28","applystatus":"1","bt_paths":"null","source_entry_tip_message":"海量音频免费听","srv_ts":"1556454381","is_year_vip":"0","activity_status":"0","username":"回忆太多不好理"}
 
 
-        String cookie = "STOKEN=402d27ccbd533e09f65562cf2fba88a797f293d7530164d75974bfee608d9e0e;PTOKEN=5cbfff9f2f105700f2b252b8ad5ca69f;pcsett=1556530005-7ab1ea6545a6e6d4bcc12a6f362ed3fc;pan_login_way=1;SCRC=32c813a559ca6a4fa9062b9916e7ae31;PANWEB=1;BDUSS=DRiVjB1fnhzbWxZblVPNFNvVTBXSWJMNTRYWVhtRTViWjN5ejl0VUhhflR-dXhjSVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANNxxVzTccVcM;PASSID=72m5xX;FILE_STOKEN=402d27ccbd533e09f65562cf2fba88a771aadcef16ca71a4942be9877c8586c7;BAIDUID=FFC509984492D8A34C905B76EB0EBC1F:FG=1;UBI=fi_PncwhpxZ%7ETaJc6wN%7E6W1rQehRbEX5yM%7E;PANPSC=7820773824839565939%3AQsaf43VL%2Ft4Nqu6Hm%2FZfKJgn1M6s6PFhIxDGQGgSurphs5%2FZj17TVSKbQDGpKep%2Bcpe3QKXhtMijDaTuwfy3xNR028b7i%2B2HmldUB8t5cds56qcFQuYLaiA9YKyMd6JELvxjdeGWe16DTmdSEuVx3i%2B37N4rR16QY8uG8AM%2BY0Ih6uZoP3DwQ3ePlzJEAU4t4oRCM5jrTJ0BDChpkEtqiw%3D%3D;";
+        String cookie = "STOKEN=2a102e6500383e74fd2adea79851f948a41a12b967344726f69530ab73a9670b;PTOKEN=2f03059afaca086c3fffd37ecde9eb47;pcsett=1556540781-1c7c305e486f45218166b32058405a94;pan_login_way=1;SCRC=e2f47b2c1dca501d31097b32c374593f;PANWEB=1;BDUSS=DJzVWRYV3RELVI0OWF3c2YwNm5hMEFRVWI5elc0VjljQWRnd2ZNMXRETHJLTzFjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOubxVzrm8VcU;PASSID=2P72DJ;FILE_STOKEN=2a102e6500383e74fd2adea79851f948a41a12b967344726f69530ab73a9670b;BAIDUID=1AB7DE19E7F69710207B142820B1662D:FG=1;UBI=fi_PncwhpxZ%7ETaJc5TOqqRxC6QC785vNWh4;PANPSC=7630149378413235739%3AQsaf43VL%2Ft4Nqu6Hm%2FZfKJgn1M6s6PFhIxDGQGgSurphs5%2FZj17TVSKbQDGpKep%2Bcpe3QKXhtMijDaTuwfy3xNR028b7i%2B2HmldUB8t5cdtpvcNeNLk7Pb%2FiiUOqky53LvxjdeGWe16DTmdSEuVx3i%2B37N4rR16QY8uG8AM%2BY0Ih6uZoP3DwQ3ePlzJEAU4t4oRCM5jrTJ0BDChpkEtqiw%3D%3D;";
+
+
 
         PanCoreUtil.standard_cookie = cookie;
 //        Map<String, String> mainHeader = PanCoreUtil.getMainHeader();
@@ -448,23 +484,67 @@ public class PanApiService {
 //        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
 //        mainHeader.put("Upgrade-Insecure-Requests", "1");
 
-        String sign = PanCoreUtil.getDownloadSign("d76e889b6aafd3087ac3bd56f4d4053a", "c45c220d07a6a0df99a9086c981dea9916cefc33");
+        String sign = PanCoreUtil.getDownloadSign("d76e889b6aafd3087ac3bd56f4d4053a", "000fcaf8ddc345d9701a675f1af6d825db420c12");
         System.out.println(sign);
         //detail	[{"type":3,"path":"/我的资源/刘惜君 - 我很快乐.mp3","fs_id":526056080704766,"category":2,"op_time":1556190572}]
         List<Long> fidles = new ArrayList<>();
 //        fidles.add(422493994346459L);//[422493994346459,526056080704766]
-        fidles.add(299534302069476L);//[422493994346459,526056080704766]
+        fidles.add(526056080704766L);//[422493994346459,526056080704766]
 //        String timst = apiDownloadRecentReport(bdstoken, detail, cookie1);
 
-        List<Garbageguid> flieList = new ArrayList<>();
-        Garbageguid garbageguid=new Garbageguid();
-        garbageguid.setFs_id(299534302069476L);
-        garbageguid.setMd5("08a8242c3008a4689152e6a0201b678c");
-            flieList.add(garbageguid);
-        String garbageguid1 = garbageguid(bdstoken, flieList, cookie);
-        System.out.println(garbageguid1);
-        String s = apiDownloadURL(bdstoken, sign, fidles, 1556443605 + "", cookie);
+        String xduss="pansec_DCb740ccc5511e5e8fedcff06b081203-EMSYx%2FtAuBSKIp6WfL6WPPsERLnln0THbB9kGqyU4sqppCC2MP4TcU%2BDAMW4yk69q3%2FwPQil01ajqN%2BMZ4J71GkS4lVpCzcEfUIxxizbI2r6tdNbVkalH45SQ14synys0WTOJScpV58DpC6D77ulYMzgDfWkMHWJNqW4IDVXyT%2FUPEsyEqGLz1reFvYVNbVLR9OfzSDNmzzqZVaX09GFK1I9uGxrC5ZPM6Hz2qSM7L2D1aPYXgvtyEmibas4MLXnLyGAdtJIzUZ7A1F9fESDPw%3D%3D";
+        PanCoreUtil.XDUSS(xduss,null);
+        String a = "1556454381";
+        String s = apiDownloadURL(bdstoken, sign, fidles, 1556454381 + "", cookie);
+//        fs_id=
         System.out.println(s);
+        String path = "/我的资源/34.720p.mp4";
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+//                .url("https://d.pcs.baidu.com/file/c6dfef6ba983b4efebc82091b76453cb?fid=3754657732-250528-526056080704766&rt=pr&sign=FDtAERVCY-DCb740ccc5511e5e8fedcff06b081203-SEOxdVdftgYI6OEhI2o9JGG58Sk%3D&expires=8h&chkv=1&chkbd=1&chkpc=et&dp-logid=2712727659714700561&dp-callid=0&dstime=1556377698&r=636903735&vip=0").get()
+               .url(s)
+                .addHeader("Host", "d.pcs.baidu.com")
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0")
+                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .addHeader("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2")
+                .addHeader("Accept-Encoding", "gzip, deflate, br")
+                .addHeader("Referer", "https://pan.baidu.com/disk/home?")
+                .addHeader("Connection", "keep-alive")
+//                .addHeader("Cookie", cookie)
+                //STOKEN=6d09a826797af1cfdce2d9484e70afa4e28643a07317a795429477bd233fe338;BDUSS=pMOFNpS1RadndFYnVkT0p0NTZ0TTJRcGstaWR5VVdFQXJ4b3FHN2hRTWhET3hjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACF~xFwhf8RcWV;BAIDUID=8CF4DFF293BBC0AC80C84A70AF32AF75:FG;
+                        .addHeader("Cookie", "BDUSS=WN5dEtCTExlbzY3SUlKc3Z-NVNaUUZ1U353V1MtQzUwQ1Z2YW9Yb1RlLW0tLXRjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKZuxFymbsRcY;")
+                .addHeader("Upgrade-Insecure-Requests", "1")
+                .addHeader("cache-control", "no-cache")
+                .addHeader("Postman-Token", "7439d2ea-49c6-45c2-a145-71aef8e6e05a")
+                .build();
+
+        Response response = client.newCall(request).execute();
+        System.out.println(response);
+
+//        String videoAdToken = getVideoAdToken(bdstoken, path, cookie);
+
+//        String videoStream = getVideoStream(videoAdToken, path, cookie);
+//        ShareDto shareDto = shrioUrl(bdstoken, 0, fidles, cookie);
+//        System.out.println(shareDto);
+//        System.out.printf(videoStream);
+//        Response request = PanCoreUtil.getRequest("https://d.pcs.baidu.com/file/c6dfef6ba983b4efebc82091b76453cb?fid=3754657732-250528-526056080704766&rt=pr&sign=FDtAERVCY-DCb740ccc5511e5e8fedcff06b081203-nsaRaczEaRWqpT%2Bzv72VRgvot4M%3D&expires=8h&chkv=1&chkbd=1&chkpc=et&dp-logid=2640748955180820523&dp-callid=0&dstime=1556109556&r=429654111&vip=0&ext=.mp3"
+//                , "", null, mainHeader
+//        );
+
+//        System.out.println(jsonStr);
+
     }
+//    https://nj02cm01.baidupcs.com/file/fb455e5b8696b63e1840344fc52
+//
+//
+//
+//
+//
+//
+//
+//
+// 06ca6?fid=3754657732-250528-469577228126982&rt=pr&sign=FDtAERVCY-DCb740ccc5511e5e8fedcff06b081203-dqp7aidKrDglAKwHLXF6JH8Pd9I%3D&expires=8h&chkv=1&chkbd=1&chkpc=et&dp-logid=2665192954560875166&dp-callid=0&dstime=1556200617&r=792513992&vip=1&ext=.mp3
 
 }

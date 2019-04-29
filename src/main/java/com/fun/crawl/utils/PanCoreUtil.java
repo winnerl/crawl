@@ -1,6 +1,5 @@
 package com.fun.crawl.utils;
 
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.lang.StringUtils;
@@ -1108,6 +1107,29 @@ public class PanCoreUtil {
         Response response = getRequest("https://update.pan.baidu.com", "/statistics", params, headers);
         return null;
     }
+    public static Map<String, String> XDUSS(String xduss,  Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("method", "upload");
+        params.put("app_id", "250528");
+        params.put("channel", "chunlei");
+        params.put("clienttype", "0");
+        params.put("web", "1");
+        params.put("BDUSS", xduss);
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "*/*");
+        headers.put("Host", "c3.pcs.baidu.com");
+        headers.put("Cookie", standard_cookie);
+        String toGetString = mapToGetString(params, false);
+        headers.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
+        final String post = visit("https://c3.pcs.baidu.com", "/rest/2.0/pcs/superfile2" + toGetString, null, "POST", "", headers);
+        return null;
+    }
+
+
+
 
 
     public static String v3LoginAuthGetTokenForFileStoken(Map<String, String> headers) {

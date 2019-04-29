@@ -1,8 +1,8 @@
 package com.fun.crawl.config;
 
-
 import com.fun.crawl.config.auth.endpoint.AuthExceptionEntryPoint;
 import com.fun.crawl.config.auth.handler.CustomAccessDeniedHandler;
+import com.fun.crawl.config.mobile.config.MobileLoginAuthenticationSecurityConfig;
 import com.fun.crawl.filter.JwtAuthenticationFilter;
 import com.fun.crawl.filter.JwtLoginFilter;
 import com.fun.crawl.security.UserDetailsServiceImpl;
@@ -51,7 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+    @Autowired
+    private MobileLoginAuthenticationSecurityConfig mobileLoginAuthenticationSecurityConfig;
 
     /**
      * 配置认证规则
@@ -78,6 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilter(new JwtLoginFilter(authenticationManager()))
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()));
+        http.apply(mobileLoginAuthenticationSecurityConfig);
 
         ignoreUrlPropertiesConfig.getUrls().forEach(e -> {
             config.antMatchers(e).permitAll();

@@ -18,7 +18,7 @@ spring:
     hikari:
       minimum-idle: 0
 
-#  redis 配置
+  #  redis 配置
   redis:
     host: 112.74.190.171
     port: 6379
@@ -81,3 +81,9 @@ ignore:
   - /v2/api-docs
   - /webjars/**
 
+login:
+  mobile:
+    url: /login/mobile
+    parameter: mobile
+    codeParameter: smsCode
+    httpMethod: POST
