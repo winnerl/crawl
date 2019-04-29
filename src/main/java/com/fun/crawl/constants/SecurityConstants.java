@@ -26,6 +26,11 @@ public interface SecurityConstants {
 
    String SPRING_SECURITY_CODE_KEY = "code";
 
+
+   String SPRING_SECURITY_USERNAME_KEY = "username";
+
+   String SPRING_SECURITY_PASSWORD_KEY = "password";
+
     /**
      * 手机验证码登录的地址
      */

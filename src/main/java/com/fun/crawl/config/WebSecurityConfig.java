@@ -3,12 +3,13 @@ package com.fun.crawl.config;
 
 import com.fun.crawl.config.auth.endpoint.AuthExceptionEntryPoint;
 import com.fun.crawl.config.auth.handler.CustomAccessDeniedHandler;
+import com.fun.crawl.filter.JwtAuthenticationFilter;
+import com.fun.crawl.filter.JwtLoginFilter;
 import com.fun.crawl.security.UserDetailsServiceImpl;
 import com.fun.crawl.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,16 +18,12 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  * @description: web security配置
  */
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private IgnoreUrlPropertiesConfig ignoreUrlPropertiesConfig;
@@ -79,6 +76,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().authenticationEntryPoint(authExceptionEntryPoint)
                 .accessDeniedHandler(customAccessDeniedHandler);
 
+        http.addFilter(new JwtLoginFilter(authenticationManager()))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()));
 
         ignoreUrlPropertiesConfig.getUrls().forEach(e -> {
             config.antMatchers(e).permitAll();
@@ -87,6 +86,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
+                .anyRequest()
+                .access("@permissionService.hasPermission(request,authentication)")
 //                .and()
 //               .headers().frameOptions().disable()
                 .and().csrf().disable();
@@ -97,7 +98,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     }
-
 
 
 }

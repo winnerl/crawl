@@ -2,8 +2,6 @@ package com.fun.crawl.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.fun.crawl.base.service.impl.BaseServiceImpl;
 import com.fun.crawl.constants.CommonConstants;
 import com.fun.crawl.enums.DataStatusEnum;
@@ -11,9 +9,11 @@ import com.fun.crawl.enums.ResourceTypeEnum;
 import com.fun.crawl.mapper.SysResourceMapper;
 import com.fun.crawl.model.SysResource;
 import com.fun.crawl.model.dto.SysResourceTree;
+import com.fun.crawl.model.vo.SysResourceVO;
 import com.fun.crawl.service.SysResourceService;
 import com.fun.crawl.util.TreeUtil;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @description: 系统资源服务实现类
  */
 @Service
-public class SysResourceServiceImpl  extends BaseServiceImpl<SysResourceMapper, SysResource> implements SysResourceService {
+public class SysResourceServiceImpl extends BaseServiceImpl<SysResourceMapper, SysResource> implements SysResourceService {
 
     @Autowired
     private SysResourceMapper sysResourceMapper;
@@ -47,7 +47,7 @@ public class SysResourceServiceImpl  extends BaseServiceImpl<SysResourceMapper, 
     @Override
     public Set<SysResource> getSysResourceRoleCodes(List<String> roleCodes) {
         Set<SysResource> sysResources = new HashSet<>();
-        roleCodes.forEach( roleCode -> {
+        roleCodes.forEach(roleCode -> {
             sysResources.addAll(sysResourceMapper.findResourceByRoleCode(roleCode));
         });
         return sysResources;
@@ -55,7 +55,7 @@ public class SysResourceServiceImpl  extends BaseServiceImpl<SysResourceMapper, 
 
     @Override
     public List<SysResourceTree> getAllResourceTree() {
-        QueryWrapper<SysResource> query  = new QueryWrapper();
+        QueryWrapper<SysResource> query = new QueryWrapper();
         query.eq("del_flag", DataStatusEnum.NORMAL.getCode());
         List<SysResource> sysResources = sysResourceMapper.selectList(query);
         return TreeUtil.list2Tree(sysResources, CommonConstants.TREE_ROOT);
@@ -102,6 +102,18 @@ public class SysResourceServiceImpl  extends BaseServiceImpl<SysResourceMapper, 
             }
         }
         return permissions;
+    }
+
+    @Override
+    public Set<SysResourceVO> listResourceByRole(String authority) {
+        List<SysResource> sysResources = findResourceByRoleCode(authority);
+        Set<SysResourceVO> sysResourceVOS = new HashSet<>();
+        sysResources.stream().forEach(sysResource -> {
+            SysResourceVO resourceVO = new SysResourceVO();
+            BeanUtils.copyProperties(sysResource, resourceVO);
+            sysResourceVOS.add(resourceVO);
+        });
+        return sysResourceVOS;
     }
 
 }

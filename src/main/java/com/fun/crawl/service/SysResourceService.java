@@ -3,6 +3,7 @@ package com.fun.crawl.service;
 import com.fun.crawl.model.SysResource;
 import com.fun.crawl.base.service.BaseService;
 import com.fun.crawl.model.dto.SysResourceTree;
+import com.fun.crawl.model.vo.SysResourceVO;
 
 import java.util.List;
 import java.util.Set;
@@ -52,4 +53,6 @@ public interface SysResourceService extends BaseService<SysResource> {
     List<SysResource>findResourceByRoleCode(String roleCode);
 
     List<String> findPermission(List<String> roles);
+
+    Set<SysResourceVO> listResourceByRole(String authority);
 }
