@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 自定义失败处理器
+ * 全局的自定义失败处理器
  *
  * @author ： CatalpaFlat
  * @date ：Create in 21:17 2017/12/20

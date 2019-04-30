@@ -71,5 +71,7 @@ public class MobileLoginAuthenticationSecurityConfig extends SecurityConfigurerA
 
         http.authenticationProvider(mobileLoginAuthenticationProvider)
                 .addFilterAfter(mobileLoginAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+
     }
 }

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 认证成功处理器
+ * 全局的认证成功处理器
  *
  * @author ： CatalpaFlat
  * @date ：Create in 21:31 2017/12/20

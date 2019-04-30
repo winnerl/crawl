@@ -3,8 +3,8 @@ package com.fun.crawl.config;
 import com.fun.crawl.config.auth.endpoint.AuthExceptionEntryPoint;
 import com.fun.crawl.config.auth.handler.CustomAccessDeniedHandler;
 import com.fun.crawl.config.mobile.config.MobileLoginAuthenticationSecurityConfig;
-import com.fun.crawl.filter.JwtAuthenticationFilter;
-import com.fun.crawl.filter.JwtLoginFilter;
+import com.fun.crawl.config.auth.filter.JwtAuthenticationFilter;
+import com.fun.crawl.config.auth.filter.JwtLoginFilter;
 import com.fun.crawl.security.UserDetailsServiceImpl;
 import com.fun.crawl.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,9 +86,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         });
         config
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/login/**").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
                 .anyRequest()
+//                添加权限过滤器
                 .access("@permissionService.hasPermission(request,authentication)")
 //                .and()
 //               .headers().frameOptions().disable()
@@ -101,5 +103,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encode = bCryptPasswordEncoder.encode("123456");
+        System.out.println(encode);
+    }
 
 }

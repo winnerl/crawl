@@ -4,6 +4,8 @@ import com.fun.crawl.enums.UserStatusEnum;
 import com.fun.crawl.model.vo.SysRoleVo;
 import com.fun.crawl.model.vo.SysUserVo;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,7 +18,8 @@ import java.util.List;
 /**
  * @description: security 用户对象
  */
-@Data
+@Getter
+@Setter
 public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID = -2636609458742965698L;
@@ -37,6 +40,18 @@ public class UserDetailsImpl implements UserDetails {
         this.status = userVo.getDelFlag();
         this.roleVos = userVo.getSysRoleVoList();
     }
+
+
+    public SysUserVo GetSysUserVo() {
+        SysUserVo sysUserVo=new SysUserVo();
+        sysUserVo.setUserId(userId);
+        sysUserVo.setDelFlag(status);
+        sysUserVo.setSysRoleVoList(roleVos);
+        sysUserVo.setUsername(username);
+        sysUserVo.setPassword(password);
+        return sysUserVo;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

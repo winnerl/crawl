@@ -2,7 +2,7 @@ package com.fun.crawl.model.vo;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 
@@ -72,12 +72,12 @@ public class SysUserVo {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 更新时间
      */
-    private LocalDateTime modifyTime;
+    private Date modifyTime;
 
     /**
      * 是否删除 0-未删除 1-删除

@@ -52,7 +52,7 @@ public class MobileLoginAuthenticationToken extends AbstractAuthenticationToken 
 
     @Override
     public Object getCredentials() {
-        return null;
+        return this.credentials;
     }
 
     @Override

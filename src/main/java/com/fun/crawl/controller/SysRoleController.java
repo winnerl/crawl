@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/admin/role")
 @Api(value = "角色controller", tags = {"角色操作接口"})
 public class SysRoleController {
 

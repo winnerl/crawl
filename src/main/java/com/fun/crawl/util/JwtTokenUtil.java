@@ -1,7 +1,11 @@
 package com.fun.crawl.util;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.fun.crawl.model.vo.SysUserVo;
 import com.fun.crawl.security.UserDetailsImpl;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,9 +58,10 @@ public class JwtTokenUtil {
      * @param userDTO
      * @return
      */
-    public String createToken(UserDetailsImpl sysUserVo) {
+    public String createToken(UserDetailsImpl userDetails) {
         Long time = expiration;
         Map<String, Object> map = new HashMap<>(1);
+        SysUserVo sysUserVo = userDetails.GetSysUserVo();
         map.put("user", sysUserVo);
         return Jwts.builder()
                 .setClaims(map)
@@ -97,8 +102,10 @@ public class JwtTokenUtil {
      */
     public UserDetailsImpl getUserDTO(String token) {
         Claims claims = generateToken(token);
-        Map<String, String> map = claims.get("user", Map.class);
-        UserDetailsImpl userDTO = JSON.parseObject(JSON.toJSONString(map), UserDetailsImpl.class);
-        return userDTO;
+        Map<String, Object> map = claims.get("user", Map.class);
+        String toJSONString = JSONObject.toJSONString(map);
+        SysUserVo userDTO = JSONObject.parseObject(toJSONString, SysUserVo.class);
+        UserDetailsImpl userDetails=new UserDetailsImpl(userDTO);
+        return userDetails;
     }
 }

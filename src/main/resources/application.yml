@@ -87,3 +87,10 @@ login:
     parameter: mobile
     codeParameter: smsCode
     httpMethod: POST
+
+jwt:
+  tokenHeader: Authorization
+  tokenPrefix: Bearer
+  secret: crawl
+  expiration: 604800
+  rememberExpiration: 604800

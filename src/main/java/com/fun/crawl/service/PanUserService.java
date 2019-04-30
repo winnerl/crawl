@@ -3,6 +3,9 @@ package com.fun.crawl.service;
 import com.fun.crawl.model.PanUser;
 import com.fun.crawl.base.service.BaseService;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 /**
  * <p>
  *  服务类
@@ -13,4 +16,8 @@ import com.fun.crawl.base.service.BaseService;
  */
 public interface PanUserService extends BaseService<PanUser> {
 
+    Map<String, String> getQrCodeUrl(HttpServletRequest request);
+
+
+    Boolean unicast(String sign);
 }

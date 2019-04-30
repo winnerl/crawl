@@ -1,7 +1,6 @@
-package com.fun.crawl.filter;
+package com.fun.crawl.config.auth.filter;
 
 
-import com.fun.crawl.model.vo.SysUserVo;
 import com.fun.crawl.security.UserDetailsImpl;
 import com.fun.crawl.util.JwtTokenUtil;
 import com.fun.crawl.util.SpringUtils;

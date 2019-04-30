@@ -1,4 +1,4 @@
-package com.fun.crawl.filter;
+package com.fun.crawl.config.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fun.crawl.constants.SecurityConstants;
@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -41,6 +43,8 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
     private AuthenticationManager authenticationManager;
+
+
 
     public JwtLoginFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -89,7 +93,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         //将token放置请求头返回
         response.addHeader(jwtTokenUtil.getTokenHeader(), jwtTokenUtil.getTokenPrefix() + token);
         //设置登录成功后返回 登录信息
-        ApiResult<String> result = new ApiResult<>(new PermissionDefinedException(), ResponseCodeEnum.SUCCESS);
+        ApiResult<String> result = new ApiResult<>(token, ResponseCodeEnum.SUCCESS);
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
