@@ -75,7 +75,7 @@ ignore:
   - /admin/user/**
   - /admin/resource/**
   - /admin/role/**
-  - /refresh/**
+  - /pan/**
   - /swagger-ui.html
   - /swagger-resources/**
   - /v2/api-docs
