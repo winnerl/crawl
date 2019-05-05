@@ -19,5 +19,5 @@ public interface PanUserService extends BaseService<PanUser> {
     Map<String, String> getQrCodeUrl(HttpServletRequest request);
 
 
-    Boolean unicast(String sign);
+    Boolean unicast(String sign,HttpServletRequest request);
 }
