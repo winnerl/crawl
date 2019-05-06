@@ -902,6 +902,68 @@ public class PanCoreUtil {
     }
 
 
+    public static Map<String, String> home() {
+        Map<String, String> headers = getMainHeader();
+        headers.put("Host", "pan.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/");
+        headers.put("Cookie", standard_cookie);
+        Response response = getRequest(PHOST, "/disk/home?", null, headers);
+        String tempcookie = "";
+        Set<String> ks = standard_cookieMap.keySet();
+        Iterator<String> it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            tempcookie += skey + "=" + value + ";";
+        }
+        standard_cookie = tempcookie;
+
+        if (!response.isSuccessful()){
+            return null;
+        }
+        //更新全局cookie
+        Headers head = response.headers();
+        tempcookie = "";
+        for (String value : head.values("Set-Cookie")) {
+            String[] temparray = value.split("; ");
+            String[] sp = temparray[0].split("=", 2);
+            standard_cookieMap.put(sp[0], sp[1]);
+        }
+
+        ks = standard_cookieMap.keySet();
+        it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            tempcookie += skey + "=" + value + ";";
+        }
+        standard_cookie = tempcookie;
+        String token = "";
+        try {
+            String html;
+
+            InputStream is = response.body().byteStream();
+            //gzip 解压数据
+            GZIPInputStream gzipIn = new GZIPInputStream(is);
+            html = streamToStr(gzipIn, "UTF-8");
+            int start = html.indexOf("var context=");
+            int end = html.indexOf("var yunData = require('disk-system:widget/data/yunData.js');");
+            if (start != -1 && end != -1) {
+
+                token = html.substring(start + 12, end);
+                token = token.substring(0, token.lastIndexOf(";"));
+                try {
+                    Map<String, String> map = toMap(token);
+                    return map;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static Map<String, String> apiSys(String hao123ParamUrl,  Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();

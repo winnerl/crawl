@@ -40,6 +40,37 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
         return codeSignAndCodeURL;
     }
 
+    @Override
+    public PanUser sysPanUser(String cookie,PanUser panUser) {
+        PanCoreUtil.standard_cookie=cookie;
+        ConcurrentHashMap<String, String> stringStringConcurrentHashMap = cookieMap(cookie);
+        PanCoreUtil.standard_cookieMap=stringStringConcurrentHashMap;
+//            PanCoreUtil.diskHome();
+        Map<String, String> smap = PanCoreUtil.home();
+        String bdstoken = smap.get("bdstoken");
+        String userPaninfo = "";
+        try {
+            userPaninfo = PanCoreUtil.mapToJson(smap, false);
+            Map<String, String> headMap = PanCoreUtil.xmlHttpHead();
+            String headMapString = PanCoreUtil.mapToJson(headMap, false);
+            panUser.setCookie(PanCoreUtil.standard_cookie)
+                    .setCreateTime(new Date())
+                    .setHeaders(headMapString)
+                    .setUk(Long.valueOf(smap.get("uk")))
+                    .setJsons(userPaninfo)
+                    .setPanName(smap.get("username"))
+                    .setModifyTime(new Date())
+                    .setUid(0L);
+            panUserMapper.updateById(panUser);
+            return  panUser;
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+
+        return  null;
+    }
+
+
 
     @Override
     public Boolean unicast(String sign, HttpServletRequest request) {
@@ -103,7 +134,8 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
      * @param tempcookie
      * @return
      */
-    public ConcurrentHashMap<String, String> cookieMap(String tempcookie) {
+    @Override
+    public    ConcurrentHashMap<String, String> cookieMap(String tempcookie) {
         ConcurrentHashMap<String, String> mapa = new ConcurrentHashMap<>();
         String[] temparray = tempcookie.split("; ");
         for (int i = 0; i < temparray.length; i++) {

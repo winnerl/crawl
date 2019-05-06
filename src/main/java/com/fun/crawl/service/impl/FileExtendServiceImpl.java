@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -33,13 +34,11 @@ import java.util.Map;
 @Service
 public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, FileExtend> implements FileExtendService {
 
-
     @Autowired
     private FileExtendMapper fileExtendMapper;
 
     @Autowired
     private PanUserService panUserService;
-
 
     @Override
     public int deleteByIsDelete(long isDel) {
@@ -123,40 +122,28 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
             List<Long> fidles = new ArrayList<>();
             fidles.add(fileExtend.getFs_id());
             String url = PanApiService.apiDownloadURL(bdstoken, sign, fidles, timestamp, cookie);
-            if (url.indexOf("\"errno\":112") != -1) {
-
-            }
-
             return url;
         } catch (Exception e) {
-            e.printStackTrace();
-            PanCoreUtil.diskHome();
-            PanCoreUtil.sendTodiskHomeOne("https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=#/all?path=%2F&vmode=list");
-            Map<String, String> smap = PanCoreUtil.sendTodiskHomeTwo();
-            String bdstoken = smap.get("bdstoken");
-            String userPaninfo = "";
+            panUser = panUserService.sysPanUser(cookie, panUser);
+            cookie = panUser.getCookie();
+            jsons = panUser.getJsons();
+
             try {
-                userPaninfo = PanCoreUtil.mapToJson(smap, false);
-                PanUser newpanUser = new PanUser();
-                Map<String, String> headMap = PanCoreUtil.xmlHttpHead();
-                String headMapString = PanCoreUtil.mapToJson(headMap, false);
+                Map<String, String> map = PanCoreUtil.toMap(jsons);
+                String bdstoken = map.get("bdstoken");
+                String sign3 = map.get("sign3");
+                String sign1 = map.get("sign1");
+                String timestamp = map.get("timestamp");
+                String sign = PanCoreUtil.getDownloadSign(sign3, sign1);
+                List<Long> fidles = new ArrayList<>();
+                fidles.add(fileExtend.getFs_id());
+                String url = PanApiService.apiDownloadURL(bdstoken, sign, fidles, timestamp, cookie);
+                return url;
+            } catch (Exception ea) {
 
-                newpanUser.setCookie(PanCoreUtil.standard_cookie)
-                        .setCreateTime(new Date())
-                        .setHeaders(headMapString)
-                        .setUk(Long.valueOf(smap.get("uk")))
-                        .setJsons(userPaninfo)
-                        .setPanName(smap.get("username"))
-                        .setModifyTime(new Date())
-                        .setUid(0L);
-                boolean save = panUserService.save(newpanUser);
-
-            } catch (UnsupportedEncodingException e1) {
-                e1.printStackTrace();
             }
+            return "";
         }
-        return "";
     }
-
 
 }
