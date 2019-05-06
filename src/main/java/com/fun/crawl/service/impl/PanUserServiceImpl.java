@@ -1,5 +1,6 @@
 package com.fun.crawl.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fun.crawl.base.service.impl.BaseServiceImpl;
 import com.fun.crawl.mapper.PanUserMapper;
 import com.fun.crawl.model.PanUser;
@@ -30,7 +31,7 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
 
 
     @Autowired
-    private PanUserService panUserService;
+    private PanUserMapper panUserMapper;
 
     @Override
     public Map<String, String> getQrCodeUrl(HttpServletRequest request) {
@@ -78,7 +79,7 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
                             .setPanName(smap.get("username"))
                             .setModifyTime(new Date())
                             .setUid(0L);
-                    boolean save = panUserService.save(panUser);
+                    boolean save = this.save(panUser);
                     return save;
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -86,6 +87,14 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
             }
         }
         return false;
+    }
+
+    @Override
+    public PanUser selectByUk(Long uk) {
+        QueryWrapper<PanUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(PanUser::getUk, uk);
+        PanUser panUser = panUserMapper.selectOne(queryWrapper);
+        return panUser;
     }
 
     /**

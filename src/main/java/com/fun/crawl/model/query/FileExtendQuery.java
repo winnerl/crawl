@@ -5,7 +5,7 @@ import com.fun.crawl.model.FileExtend;
 import lombok.Data;
 
 @Data
-public class FileExtendQuery extends Page<FileExtend> {
+public class FileExtendQuery  extends Page<FileExtend> {
 
 
     /**

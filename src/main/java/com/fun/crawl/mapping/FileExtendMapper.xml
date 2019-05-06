@@ -2,100 +2,121 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fun.crawl.mapper.FileExtendMapper">
 
-<!-- 通用查询映射结果 -->
-<resultMap id="BaseResultMap" type="com.fun.crawl.model.FileExtend">
-    <id column="id" property="id"/>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.fun.crawl.model.FileExtend">
+        <id column="id" property="id"/>
         <result column="parent_id" property="parent_id"/>
-      <result column="category" property="category"/>
-      <result column="dir_empty" property="dir_empty"/>
-      <result column="empty" property="empty"/>
-      <result column="fs_id" property="fs_id"/>
-      <result column="isdir" property="isdir"/>
-      <result column="local_ctime" property="local_ctime"/>
-      <result column="local_mtime" property="local_mtime"/>
-      <result column="oper_id" property="oper_id"/>
-      <result column="path" property="path"/>
-      <result column="md5" property="md5"/>
-      <result column="server_ctime" property="server_ctime"/>
-      <result column="server_filename" property="server_filename"/>
-      <result column="server_mtime" property="server_mtime"/>
-      <result column="share" property="share"/>
-      <result column="size" property="size"/>
-      <result column="unlist" property="unlist"/>
-      <result column="modify_time" property="modify_time"/>
-      <result column="create_time" property="create_time"/>
-  </resultMap>
+        <result column="category" property="category"/>
+        <result column="dir_empty" property="dir_empty"/>
+        <result column="empty" property="empty"/>
+        <result column="fs_id" property="fs_id"/>
+        <result column="isdir" property="isdir"/>
+        <result column="local_ctime" property="local_ctime"/>
+        <result column="local_mtime" property="local_mtime"/>
+        <result column="oper_id" property="oper_id"/>
+        <result column="path" property="path"/>
+        <result column="md5" property="md5"/>
+        <result column="server_ctime" property="server_ctime"/>
+        <result column="server_filename" property="server_filename"/>
+        <result column="server_mtime" property="server_mtime"/>
+        <result column="share" property="share"/>
+        <result column="size" property="size"/>
+        <result column="unlist" property="unlist"/>
+        <result column="modify_time" property="modify_time"/>
+        <result column="create_time" property="create_time"/>
+    </resultMap>
 
-<!-- 通用查询结果列 -->
-<sql id="Base_Column_List">
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
        id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5, server_ctime, server_filename, server_mtime, share, size, unlist,modify_time,create_time
 </sql>
-<select id="pageByQuery" resultMap="BaseResultMap">
-    select     id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5, server_ctime, server_filename, server_mtime, share, size, unlist,modify_time,create_time
-    from t_file_extend
-    <where>
-        <if test="id !=null and id!=''">
-           and id = #{ id}
-        </if>
-        <if test="parent_id !=null and parent_id!=''">
-           and parent_id = #{ parent_id}
-        </if>
-        <if test="category !=null and category!=''">
-           and category = #{ category}
-        </if>
-        <if test="dir_empty !=null and dir_empty!=''">
-           and dir_empty = #{ dir_empty}
-        </if>
-        <if test="empty !=null and empty!=''">
-           and empty = #{ empty}
-        </if>
-        <if test="fs_id !=null and fs_id!=''">
-           and fs_id = #{ fs_id}
-        </if>
+    <select id="pageByQuery" resultMap="BaseResultMap">
+        select id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5,
+        server_ctime, server_filename, server_mtime, share, size, unlist,modify_time,create_time
+        from t_file_extend
+        <where>
+            <if test="id !=null and id!=''">
+                and id = #{ id}
+            </if>
+            <if test="parent_id !=null and parent_id!=''">
+                and parent_id = #{ parent_id}
+            </if>
+            <if test="category !=null and category!=''">
+                and category = #{ category}
+            </if>
+            <if test="dir_empty !=null and dir_empty!=''">
+                and dir_empty = #{ dir_empty}
+            </if>
+            <if test="empty !=null and empty!=''">
+                and empty = #{ empty}
+            </if>
+            <if test="fs_id !=null and fs_id!=''">
+                and fs_id = #{ fs_id}
+            </if>
+            <if test="isdir !=null and isdir!=''">
+                and isdir = #{ isdir}
+            </if>
+            <if test="local_ctime !=null and local_ctime!=''">
+                and local_ctime = #{ local_ctime}
+            </if>
+            <if test="local_mtime !=null and local_mtime!=''">
+                and local_mtime = #{ local_mtime}
+            </if>
+            <if test="oper_id !=null and oper_id!=''">
+                and oper_id = #{ oper_id}
+            </if>
+            <if test="path !=null and path!=''">
+                and path = #{ path}
+            </if>
+            <if test="md5 !=null and md5!=''">
+                and md5 = #{ md5}
+            </if>
+            <if test="server_ctime !=null and server_ctime!=''">
+                and server_ctime = #{ server_ctime}
+            </if>
+            <if test="server_filename !=null and server_filename!=''">
+                and server_filename = #{ server_filename}
+            </if>
+            <if test="server_mtime !=null and server_mtime!=''">
+                and server_mtime = #{ server_mtime}
+            </if>
+            <if test="share !=null and share!=''">
+                and share = #{ share}
+            </if>
+            <if test="size !=null and size!=''">
+                and size = #{ size}
+            </if>
+            <if test="unlist !=null and unlist!=''">
+                and unlist = #{ unlist}
+            </if>
+            <if test="modify_time !=null and modify_time!=''">
+                and modify_time = #{ modify_time}
+            </if>
+            <if test="create_time !=null and create_time!=''">
+                and create_time = #{ create_time}
+            </if>
+        </where>
+    </select>
+    <select id="queryByPage" resultType="com.fun.crawl.model.FileExtend">
+
+        select id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5,
+        server_ctime, server_filename, server_mtime, share, size, unlist,modify_time,create_time
+        from t_file_extend
+
         <if test="isdir !=null and isdir!=''">
-           and isdir = #{ isdir}
+            and isdir = #{ isdir}
         </if>
-        <if test="local_ctime !=null and local_ctime!=''">
-           and local_ctime = #{ local_ctime}
-        </if>
-        <if test="local_mtime !=null and local_mtime!=''">
-           and local_mtime = #{ local_mtime}
-        </if>
+
         <if test="oper_id !=null and oper_id!=''">
-           and oper_id = #{ oper_id}
+            and oper_id = #{ oper_id}
         </if>
-        <if test="path !=null and path!=''">
-           and path = #{ path}
-        </if>
-        <if test="md5 !=null and md5!=''">
-           and md5 = #{ md5}
-        </if>
-        <if test="server_ctime !=null and server_ctime!=''">
-           and server_ctime = #{ server_ctime}
-        </if>
+
         <if test="server_filename !=null and server_filename!=''">
-           and server_filename = #{ server_filename}
+            and server_filename = #{ server_filename}
         </if>
-        <if test="server_mtime !=null and server_mtime!=''">
-           and server_mtime = #{ server_mtime}
-        </if>
-        <if test="share !=null and share!=''">
-           and share = #{ share}
-        </if>
-        <if test="size !=null and size!=''">
-           and size = #{ size}
-        </if>
-        <if test="unlist !=null and unlist!=''">
-           and unlist = #{ unlist}
-        </if>
-        <if test="modify_time !=null and modify_time!=''">
-           and modify_time = #{ modify_time}
-        </if>
-        <if test="create_time !=null and create_time!=''">
-           and create_time = #{ create_time}
-        </if>
-    </where>
-</select>
+
+
+    </select>
 
 
 </mapper>

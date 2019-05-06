@@ -20,4 +20,6 @@ public interface PanUserService extends BaseService<PanUser> {
 
 
     Boolean unicast(String sign,HttpServletRequest request);
+
+    PanUser selectByUk(Long uk);
 }

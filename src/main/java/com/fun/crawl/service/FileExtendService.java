@@ -16,13 +16,34 @@ import com.fun.crawl.model.query.FileExtendQuery;
  */
 public interface FileExtendService extends BaseService<FileExtend> {
 
+
     /**
-     * 分页查询
+     * 根据is_delete全部删除
+     * @param isDel
+     * @return
+     */
+    int deleteByIsDelete(long isDel);
+
+    /**
+     * 分页查找
      * @param query
      * @return
      */
-    FileExtendQuery pageByQuery(FileExtendQuery query);
+    FileExtendQuery queryByPage(FileExtendQuery query);
 
+    /**
+     * 获取MP4文件播放流
+     * @param oper_id
+     * @param path
+     * @return
+     */
+    String getVideoStream(Long oper_id, String path);
 
-    int deleteByIsDelete(long isDel);
+    /**
+     * 获取音乐文件下载地址
+     * @param oper_id
+     * @param mpath
+     * @return
+     */
+    String getMusicUrl(Long oper_id, String mpath);
 }

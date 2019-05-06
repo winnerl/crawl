@@ -36,7 +36,7 @@ public class CrawlScheduled {
 
     }
 
-    @Scheduled(fixedDelay = 1 * 60 * 1000) // 固定每10分钟执行一次 （执行完后再算时间）
+    @Scheduled(cron = "0 0 1 * * ?")//每天凌晨1点执行一次
     public void deleteUserWalkStation() {
         List<PanUser> panUserList = panUserService.list();
         for (PanUser panUser : panUserList) {
