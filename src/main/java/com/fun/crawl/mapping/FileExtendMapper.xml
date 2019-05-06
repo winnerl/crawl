@@ -22,14 +22,16 @@
       <result column="share" property="share"/>
       <result column="size" property="size"/>
       <result column="unlist" property="unlist"/>
+      <result column="modify_time" property="modify_time"/>
+      <result column="create_time" property="create_time"/>
   </resultMap>
 
 <!-- 通用查询结果列 -->
 <sql id="Base_Column_List">
-       id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5, server_ctime, server_filename, server_mtime, share, size, unlist
+       id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5, server_ctime, server_filename, server_mtime, share, size, unlist,modify_time,create_time
 </sql>
 <select id="pageByQuery" resultMap="BaseResultMap">
-    select     id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5, server_ctime, server_filename, server_mtime, share, size, unlist
+    select     id, parent_id, category, dir_empty, empty, fs_id, isdir, local_ctime, local_mtime, oper_id, path, md5, server_ctime, server_filename, server_mtime, share, size, unlist,modify_time,create_time
     from t_file_extend
     <where>
         <if test="id !=null and id!=''">
@@ -85,6 +87,12 @@
         </if>
         <if test="unlist !=null and unlist!=''">
            and unlist = #{ unlist}
+        </if>
+        <if test="modify_time !=null and modify_time!=''">
+           and modify_time = #{ modify_time}
+        </if>
+        <if test="create_time !=null and create_time!=''">
+           and create_time = #{ create_time}
         </if>
     </where>
 </select>

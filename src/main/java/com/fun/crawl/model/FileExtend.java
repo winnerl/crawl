@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -90,6 +92,19 @@ public class FileExtend implements Serializable {
 
     @TableField("unlist")
     private Long unlist;
+
+
+    @TableField("modify_time")
+    private Date modify_time;
+
+
+    @TableField("create_time")
+    private Date create_time;
+
+    @TableField("is_exist")
+    private Long is_exist;
+
+
 
 
 }
