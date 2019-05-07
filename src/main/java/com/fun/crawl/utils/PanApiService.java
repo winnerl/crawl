@@ -291,7 +291,7 @@ public class PanApiService {
         postMap.put("sign", sign);
         postMap.put("timestamp", timestamp);
         postMap.put("type", "dlink");
-        postMap.put("vip", "0");
+        postMap.put("vip", "1");
         String getString = PanCoreUtil.mapToGetString(parmsMap, true);
         String res = PanCoreUtil.visit(PANHOST, "/api/download" + getString, postMap, "POST_PARM", cookie, null);
         JSONObject jsonObject = JSONObject.parseObject(res);

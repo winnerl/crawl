@@ -74,10 +74,12 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
             Map<String, String> map = PanCoreUtil.toMap(jsons);
             String bdstoken = map.get("bdstoken");
             String videoAdToken = PanApiService.getVideoAdToken(bdstoken, path, cookie);
+            Thread.sleep(5000);
             String videoStream = PanApiService.getVideoStream(videoAdToken, path, cookie);
             if (videoStream.indexOf("\"errno\":133") != -1) {
                 JSONObject parse = (JSONObject) JSON.parse(videoStream);
                 videoAdToken = parse.getString("adToken");
+                Thread.sleep(5000);
                 videoStream = PanApiService.getVideoStream(videoAdToken, path, cookie);
             }
 
@@ -144,6 +146,59 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
             }
             return "";
         }
+    }
+
+    /**
+     * 获取MP4文件播放流
+     *
+     * @param oper_id
+     * @param fs_id   百度文件标识
+     * @return
+     */
+    @Override
+    public String getVideoStreamByFsId(Long uk, Long fs_id) {
+        PanUser panUser = panUserService.selectByUk(uk);
+        if (panUser == null) {
+            throw new BusinessException("pan is not exist");
+        }
+        String cookie = panUser.getCookie();
+        String jsons = panUser.getJsons();
+
+        QueryWrapper<FileExtend> queryWrapper = new QueryWrapper();
+        queryWrapper.lambda().eq(FileExtend::getFs_id, fs_id);
+        queryWrapper.lambda().eq(FileExtend::getOper_id, uk);
+        FileExtend fileExtend = fileExtendMapper.selectOne(queryWrapper);
+        if (fileExtend.getCategory().intValue() != 1) {
+            throw new BusinessException("file type error");
+        }
+        String path=fileExtend.getPath();
+        try {
+
+            Map<String, String> map = PanCoreUtil.toMap(jsons);
+            String bdstoken = map.get("bdstoken");
+            String videoAdToken = PanApiService.getVideoAdToken(bdstoken, path, cookie);
+            Thread.sleep(5000);
+            String videoStream = PanApiService.getVideoStream(videoAdToken, path, cookie);
+            if (videoStream.indexOf("\"errno\":133") != -1) {
+                JSONObject parse = (JSONObject) JSON.parse(videoStream);
+                videoAdToken = parse.getString("adToken");
+                Thread.sleep(5000);
+                videoStream = PanApiService.getVideoStream(videoAdToken, path, cookie);
+            }
+
+            return videoStream;
+//            return videoStream.replace("#EXTM3U\n" +
+//                    "#EXT-X-TARGETDURATION:15\n" +
+//                    "#EXT-X-DISCONTINUITY","#EXTM3U\n" +
+//                    "#EXT-X-VERSION:3\n" +
+//                    "#EXT-X-ALLOW-CACHE:NO\n" +
+//                    "#EXT-X-TARGETDURATION:6\n" +
+//                    "#EXT-X-MEDIA-SEQUENCE:0\n" +
+//                    "#EXT-X-PLAYLIST-TYPE:VOD");
+        } catch (Exception e) {
+
+        }
+        return "";
     }
 
 }

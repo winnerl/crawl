@@ -791,13 +791,14 @@ public class VisitApiUtil {
 
 
     public static void main(String[] args) throws IOException {
-        Response response = request("https://www.baidu.com","/", new HashMap<>(),"GET", "");
-        Headers headers = response.headers();
-        System.out.println(headers.toMultimap());
-
-        System.out.println("---------------------");
-        System.out.println(response.body().string());
-
+//        Response response = request("https://www.baidu.com","/", new HashMap<>(),"GET", "");
+//        Headers headers = response.headers();
+//        System.out.println(headers.toMultimap());
+//
+//        System.out.println("---------------------");
+//        System.out.println(response.body().string());
+     String  res = URLEncoder.encode("/我的资源/EP53.mp4", "UTF-8");
+        System.out.println( res);
     }
 
 

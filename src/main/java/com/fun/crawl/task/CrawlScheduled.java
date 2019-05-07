@@ -10,7 +10,6 @@ import com.fun.crawl.service.PanUserService;
 import com.fun.crawl.utils.PanApiService;
 import com.fun.crawl.utils.PanCoreUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -30,13 +29,12 @@ public class CrawlScheduled {
     private PanUserService panUserService;
 
 
-    @Scheduled(cron = "0 0 1 * * ?")//每天凌晨1点执行一次
-    public void batchInsertMemberWalks() {
+    //    @Scheduled(cron = "0 59 23 * * ?") // 每天23点59分执行一次，可以自定义，
+//    @Scheduled(fixedDelay = 20 * 60 * 1000) // 固定每20分钟执行一次 （执行完后再算时间）
+//    @Scheduled(fixedDelay = 300 * 60 * 1000) // 固定每5个小时执行一次
+//    @Scheduled(cron="0 0 1 * * ?")//每天凌晨1点执行一次
 
-
-    }
-
-    @Scheduled(cron = "0 0 1 * * ?")//每天凌晨1点执行一次
+    @Scheduled(fixedDelay = 300 * 60 * 1000) // 固定每5个小时执行一次
     public void deleteUserWalkStation() {
         List<PanUser> panUserList = panUserService.list();
         for (PanUser panUser : panUserList) {
@@ -49,18 +47,12 @@ public class CrawlScheduled {
             FileExtend fileExtend = new FileExtend();
             fileExtend.setIs_exist(0L);
             boolean update = fileExtendService.update(fileExtend, updateWrapper);
-            try {
-                Map<String, String> map = PanCoreUtil.toMap(jsons);
-                String bdstoken = map.get("bdstoken");
-                genericData(bdstoken, cookie);
-
-                QueryWrapper<FileExtend> wrapper = new QueryWrapper<>();
-                wrapper.lambda().eq(FileExtend::getIs_exist, 0L);
-                int sumDel = fileExtendService.deleteByIsDelete(0L);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Map<String, String> map = PanCoreUtil.toMap(jsons);
+            String bdstoken = map.get("bdstoken");
+            genericData(bdstoken, cookie);
+            QueryWrapper<FileExtend> wrapper = new QueryWrapper<>();
+            wrapper.lambda().eq(FileExtend::getIs_exist, 0L);
+            int sumDel = fileExtendService.deleteByIsDelete(0L);
 
         }
 
@@ -79,13 +71,13 @@ public class CrawlScheduled {
             fileExtend.setModify_time(new Date());
             QueryWrapper<FileExtend> queryWrapper = new QueryWrapper<>();
             queryWrapper.lambda().eq(FileExtend::getFs_id, fileExtend.getFs_id());
-           FileExtend fileExtendSel = fileExtendService.getOne(queryWrapper);
-            if (fileExtendSel== null) {
+            FileExtend fileExtendSel = fileExtendService.getOne(queryWrapper);
+            if (fileExtendSel == null) {
                 fileExtend.setCreate_time(new Date());
                 fileExtend.setIs_exist(1L);
                 fileExtendService.save(fileExtend);
             } else {
-                fileExtend=fileExtendSel;
+                fileExtend = fileExtendSel;
                 fileExtend.setModify_time(new Date());
                 fileExtend.setIs_exist(1L);
                 fileExtendService.updateById(fileExtend);

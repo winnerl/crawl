@@ -7,7 +7,7 @@ server:
 #应用基本配置
 spring:
   application:
-    name: fisher-back-service
+    name: crawl
 
   #数据源配置
   datasource:

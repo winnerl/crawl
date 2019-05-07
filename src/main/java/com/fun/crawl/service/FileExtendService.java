@@ -46,4 +46,13 @@ public interface FileExtendService extends BaseService<FileExtend> {
      * @return
      */
     String getMusicUrl(Long oper_id, String mpath);
+
+
+    /**
+     * 获取MP4文件播放流
+     * @param oper_id
+     * @param fs_id  百度文件标识
+     * @return
+     */
+    String getVideoStreamByFsId(Long oper_id, Long fs_id);
 }

@@ -292,8 +292,7 @@ public class PanCoreUtil {
      * @return 字符串
      * @throws UnsupportedEncodingException
      */
-    public static String mapToJson(Map<String, String> inputMap, boolean boo)
-            throws UnsupportedEncodingException {
+    public static String mapToJson(Map<String, String> inputMap, boolean boo) {
         String res = null;
         if (inputMap != null && inputMap.size() > 0) {
             JSONObject js = new JSONObject();
@@ -315,7 +314,11 @@ public class PanCoreUtil {
             if (js.length() > 0) {
                 res = js.toString();
                 if (boo) {
-                    res = URLEncoder.encode(res, "UTF-8");
+                    try {
+                        res = URLEncoder.encode(res, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        log.error("字符中ENCODE失败", e);
+                    }
                 }
             }
         }
@@ -460,15 +463,24 @@ public class PanCoreUtil {
      * @return Map对象
      * @throws JSONException
      */
-    public static Map<String, String> toMap(String jsonString) throws JSONException {
-        JSONObject jsonObject = new JSONObject(jsonString);
+    public static Map<String, String> toMap(String jsonString) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(jsonString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         Map<String, String> result = new HashMap<String, String>();
         Iterator<?> iterator = jsonObject.keys();
         String key = null;
         String value = null;
         while (iterator.hasNext()) {
             key = String.valueOf(iterator.next());
-            value = String.valueOf(jsonObject.get(key));
+            try {
+                value = String.valueOf(jsonObject.get(key));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             result.put(key, value);
         }
         return result;
@@ -708,8 +720,6 @@ public class PanCoreUtil {
     }
 
 
-
-
     /**
      * pan.baidu.com
      * 第4步，https://passport.baidu.com/v3/login/api/auth/?return_type=5&tpl=netdisk&u=https%3A%2F%2Fpan.baidu.com%2Fdisk%2Fhome
@@ -887,12 +897,9 @@ public class PanCoreUtil {
 
                 token = html.substring(start + 12, end);
                 token = token.substring(0, token.lastIndexOf(";"));
-                try {
-                    Map<String, String> map = toMap(token);
-                    return map;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Map<String, String> map = toMap(token);
+                return map;
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -918,7 +925,7 @@ public class PanCoreUtil {
         }
         standard_cookie = tempcookie;
 
-        if (!response.isSuccessful()){
+        if (!response.isSuccessful()) {
             return null;
         }
         //更新全局cookie
@@ -952,12 +959,9 @@ public class PanCoreUtil {
 
                 token = html.substring(start + 12, end);
                 token = token.substring(0, token.lastIndexOf(";"));
-                try {
-                    Map<String, String> map = toMap(token);
-                    return map;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Map<String, String> map = toMap(token);
+                return map;
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -965,7 +969,7 @@ public class PanCoreUtil {
         return null;
     }
 
-    public static Map<String, String> apiSys(String hao123ParamUrl,  Map<String, String> headers) {
+    public static Map<String, String> apiSys(String hao123ParamUrl, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("bdu", hao123ParamUrl);
         params.put("t", System.currentTimeMillis() + "");
@@ -979,33 +983,10 @@ public class PanCoreUtil {
         return null;
     }
 
-    public static Map<String, String> cmsdata(String bdsToken,  Map<String, String> headers) {
+    public static Map<String, String> cmsdata(String bdsToken, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("do", "download");
-        params.put("_", ""+System.currentTimeMillis());
-        params.put("channel", "chunlei");
-        params.put("web", "1");
-        params.put("app_id", "250528");
-        params.put("bdstoken", bdsToken);
-        params.put("clienttype", "0");
-        params.put("logid", "");
-        if (headers == null) {
-            headers = getMainHeader();
-        }
-        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
-        headers.put("Accept-Encoding", "gzip, deflate, br");
-        headers.put("Referer", "https://pan.baidu.com/disk/home?");
-        headers.put("Cookie", standard_cookie);
-        headers.put("X-Requested-With", "XMLHttpRequest");
-        headers.put("Host", "pan.baidu.com");
-        Response response = getRequest(PHOST, "/disk/cmsdata", params, headers);
-        return null;
-    }
-    public static Map<String, String> cmsdata2(String bdsToken,  Map<String, String> headers) {
-        Map<String, String> params = new HashMap<>();
-        params.put("do", "manual");
-        params.put("ch", "download_limit");
-        params.put("_", ""+System.currentTimeMillis());
+        params.put("_", "" + System.currentTimeMillis());
         params.put("channel", "chunlei");
         params.put("web", "1");
         params.put("app_id", "250528");
@@ -1025,7 +1006,31 @@ public class PanCoreUtil {
         return null;
     }
 
-    public static Map<String, String> en3(String bdsToken,  Map<String, String> headers) {
+    public static Map<String, String> cmsdata2(String bdsToken, Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("do", "manual");
+        params.put("ch", "download_limit");
+        params.put("_", "" + System.currentTimeMillis());
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("bdstoken", bdsToken);
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
+        headers.put("Accept-Encoding", "gzip, deflate, br");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?");
+        headers.put("Cookie", standard_cookie);
+        headers.put("X-Requested-With", "XMLHttpRequest");
+        headers.put("Host", "pan.baidu.com");
+        Response response = getRequest(PHOST, "/disk/cmsdata", params, headers);
+        return null;
+    }
+
+    public static Map<String, String> en3(String bdsToken, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("channel", "chunlei");
         params.put("web", "1");
@@ -1046,11 +1051,11 @@ public class PanCoreUtil {
         return null;
     }
 
-    public static Map<String, String> refresh(String bdsToken,  Map<String, String> headers) {
+    public static Map<String, String> refresh(String bdsToken, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("force", "1");
         params.put("setread", "0");
-        params.put("begin", ""+System.currentTimeMillis());
+        params.put("begin", "" + System.currentTimeMillis());
         params.put("channel", "chunlei");
         params.put("web", "1");
         params.put("app_id", "250528");
@@ -1070,7 +1075,7 @@ public class PanCoreUtil {
         return null;
     }
 
-    public static Map<String, String> diffall(String bdsToken,  Map<String, String> headers) {
+    public static Map<String, String> diffall(String bdsToken, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("message", "2");
         params.put("channel", "chunlei");
@@ -1092,7 +1097,7 @@ public class PanCoreUtil {
         return null;
     }
 
-    public static Map<String, String> reportUser(String bdsToken,  Map<String, String> headers) {
+    public static Map<String, String> reportUser(String bdsToken, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("channel", "chunlei");
         params.put("web", "1");
@@ -1109,8 +1114,8 @@ public class PanCoreUtil {
 
 
         Map<String, String> postMap = new HashMap<>();
-        postMap.put("timestamp",System.currentTimeMillis()/1000+"");
-        postMap.put("action","web_home");
+        postMap.put("timestamp", System.currentTimeMillis() / 1000 + "");
+        postMap.put("action", "web_home");
 
         headers.put("Accept", "*/*");
         headers.put("Accept-Encoding", "gzip, deflate, br");
@@ -1118,12 +1123,12 @@ public class PanCoreUtil {
         headers.put("Cookie", standard_cookie);
         headers.put("X-Requested-With", "XMLHttpRequest");
         headers.put("Host", "pan.baidu.com");
-        visit(PHOST, "/api/report/user"+getString, postMap, "POST_PARM",standard_cookie,headers);
+        visit(PHOST, "/api/report/user" + getString, postMap, "POST_PARM", standard_cookie, headers);
         return null;
     }
 
 
-    public static Map<String, String> membership(String bdsToken,  Map<String, String> headers) {
+    public static Map<String, String> membership(String bdsToken, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("method", "query");
         params.put("channel", "chunlei");
@@ -1136,17 +1141,17 @@ public class PanCoreUtil {
             headers = getMainHeader();
         }
         Map<String, String> postMap = new HashMap<>();
-        postMap.put("user_id",1+"");
+        postMap.put("user_id", 1 + "");
 
         headers.put("Accept", "application/json, text/javascript, */*; q=0.01");
         headers.put("Referer", "https://pan.baidu.com/disk/home?");
         String getString = PanCoreUtil.mapToGetString(params, true);
-         visit(PHOST, "/rest/2.0/membership/isp"+getString, postMap, "POST_PARM",standard_cookie,headers);
+        visit(PHOST, "/rest/2.0/membership/isp" + getString, postMap, "POST_PARM", standard_cookie, headers);
         return null;
     }
 
 
-    public static Map<String, String> statistics(  Map<String, String> headers) {
+    public static Map<String, String> statistics(Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("clienttype", "0");
         params.put("version", "v5");
@@ -1169,7 +1174,8 @@ public class PanCoreUtil {
         Response response = getRequest("https://update.pan.baidu.com", "/statistics", params, headers);
         return null;
     }
-    public static Map<String, String> XDUSS(String xduss,  Map<String, String> headers) {
+
+    public static Map<String, String> XDUSS(String xduss, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();
         params.put("method", "upload");
         params.put("app_id", "250528");
@@ -1191,22 +1197,17 @@ public class PanCoreUtil {
     }
 
 
-
-
-
     public static String v3LoginAuthGetTokenForFileStoken(Map<String, String> headers) {
         if (headers == null) {
             headers = getMainHeader();
         }
-            headers.put("Host", "pcs.baidu.com");
-            headers.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
-            headers.put("Accept", " image/webp,image/apng,image/*,*/*;q=0.8");
-            headers.put("Cookie", standard_cookie);
-        Response response = getRequest("https://pcs.baidu.com/rest/2.0/pcs/file?method=plantcookie&type=stoken&source=pcs", "",null , headers);
+        headers.put("Host", "pcs.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/disk/home?errno=0&errmsg=Auth%20Login%20Sucess&&bduss=&ssnerror=0&traceid=");
+        headers.put("Accept", " image/webp,image/apng,image/*,*/*;q=0.8");
+        headers.put("Cookie", standard_cookie);
+        Response response = getRequest("https://pcs.baidu.com/rest/2.0/pcs/file?method=plantcookie&type=stoken&source=pcs", "", null, headers);
 
         String u = response.headers().get("Location");//是重定向URL
-
-
 
 
         headers.put("Host", "passport.baidu.com");
@@ -1218,7 +1219,7 @@ public class PanCoreUtil {
                 uilder.addHeader(header.getKey(), header.getValue());
             }
         }
-         response = getRequest(u, "", null, headers);
+        response = getRequest(u, "", null, headers);
         String location = response.headers().get("Location");//是重定向URL
         try {
 
@@ -1259,10 +1260,10 @@ public class PanCoreUtil {
                 for (String value : head.values("Set-Cookie")) {
                     String[] temparray = value.split("; ");
                     String[] sp = temparray[0].split("=", 2);
-                        standard_cookieMap.put(sp[0], sp[1]);
-                        if (sp[0].equals("pcsett")){
-                            f_Cookie += sp[0] + "=" + sp[1] + ";";
-                        }
+                    standard_cookieMap.put(sp[0], sp[1]);
+                    if (sp[0].equals("pcsett")) {
+                        f_Cookie += sp[0] + "=" + sp[1] + ";";
+                    }
                 }
             }
 
@@ -1313,7 +1314,7 @@ public class PanCoreUtil {
 
             response = execute(request);
 
-               head = response.headers();
+            head = response.headers();
             String tempcookie = "";
             if (head.values("Set-Cookie") != null && head.values("Set-Cookie").size() > 0) {
                 for (String value : head.values("Set-Cookie")) {
@@ -1393,7 +1394,7 @@ public class PanCoreUtil {
         map.put("Accept", "application/json, text/javascript, */*; q=0.01");
         map.put("Accept-Language", "zh-CN,zh;q=0.9");
         map.put("X-Requested-With", "XMLHttpRequest");
-        map.put("Accept-Encoding", "gzip, deflate, br");
+//        map.put("Accept-Encoding", "gzip, deflate, br");
         map.put("Connection", "keep-alive");
         return map;
     }

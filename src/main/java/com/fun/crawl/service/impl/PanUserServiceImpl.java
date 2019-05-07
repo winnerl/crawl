@@ -6,12 +6,10 @@ import com.fun.crawl.mapper.PanUserMapper;
 import com.fun.crawl.model.PanUser;
 import com.fun.crawl.service.PanUserService;
 import com.fun.crawl.utils.PanCoreUtil;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,15 +39,15 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
     }
 
     @Override
-    public PanUser sysPanUser(String cookie,PanUser panUser) {
-        PanCoreUtil.standard_cookie=cookie;
+    public PanUser sysPanUser(String cookie, PanUser panUser) {
+        PanCoreUtil.standard_cookie = cookie;
         ConcurrentHashMap<String, String> stringStringConcurrentHashMap = cookieMap(cookie);
-        PanCoreUtil.standard_cookieMap=stringStringConcurrentHashMap;
+        PanCoreUtil.standard_cookieMap = stringStringConcurrentHashMap;
 //            PanCoreUtil.diskHome();
         Map<String, String> smap = PanCoreUtil.home();
-        String bdstoken = smap.get("bdstoken");
-        String userPaninfo = "";
-        try {
+        if (smap != null) {
+            String bdstoken = smap.get("bdstoken");
+            String userPaninfo = "";
             userPaninfo = PanCoreUtil.mapToJson(smap, false);
             Map<String, String> headMap = PanCoreUtil.xmlHttpHead();
             String headMapString = PanCoreUtil.mapToJson(headMap, false);
@@ -62,14 +60,10 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
                     .setModifyTime(new Date())
                     .setUid(0L);
             panUserMapper.updateById(panUser);
-            return  panUser;
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
+            return panUser;
         }
-
-        return  null;
+        return null;
     }
-
 
 
     @Override
@@ -81,11 +75,7 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
         if (map.containsKey("channel_v")) {
             String channel_v = map.get("channel_v");
             Map<String, String> channel_vmap = null;
-            try {
-                channel_vmap = toMap(channel_v);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            channel_vmap = toMap(channel_v);
             if ("0".equals(channel_vmap.get("status"))) {
                 String v3Bduss = channel_vmap.get("v");
                 Map<String, String> v3map = PanCoreUtil.v3Login(v3Bduss, null);
@@ -95,26 +85,23 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
                 Map<String, String> smap = PanCoreUtil.sendTodiskHomeTwo();
                 String bdstoken = smap.get("bdstoken");
                 String userPaninfo = "";
-                try {
-                    userPaninfo = PanCoreUtil.mapToJson(smap, false);
+                userPaninfo = PanCoreUtil.mapToJson(smap, false);
 
-                    PanUser panUser = new PanUser();
-                    Map<String, String> headMap = PanCoreUtil.xmlHttpHead();
-                    String headMapString = PanCoreUtil.mapToJson(headMap, false);
+                PanUser panUser = new PanUser();
+                Map<String, String> headMap = PanCoreUtil.xmlHttpHead();
+                String headMapString = PanCoreUtil.mapToJson(headMap, false);
 
-                    panUser.setCookie(PanCoreUtil.standard_cookie)
-                            .setCreateTime(new Date())
-                            .setHeaders(headMapString)
-                            .setUk(Long.valueOf(smap.get("uk")))
-                            .setJsons(userPaninfo)
-                            .setPanName(smap.get("username"))
-                            .setModifyTime(new Date())
-                            .setUid(0L);
-                    boolean save = this.save(panUser);
-                    return save;
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                panUser.setCookie(PanCoreUtil.standard_cookie)
+                        .setCreateTime(new Date())
+                        .setHeaders(headMapString)
+                        .setUk(Long.valueOf(smap.get("uk")))
+                        .setJsons(userPaninfo)
+                        .setPanName(smap.get("username"))
+                        .setModifyTime(new Date())
+                        .setUid(0L);
+                boolean save = this.save(panUser);
+                return save;
+
             }
         }
         return false;
@@ -135,9 +122,9 @@ public class PanUserServiceImpl extends BaseServiceImpl<PanUserMapper, PanUser> 
      * @return
      */
     @Override
-    public    ConcurrentHashMap<String, String> cookieMap(String tempcookie) {
+    public ConcurrentHashMap<String, String> cookieMap(String tempcookie) {
         ConcurrentHashMap<String, String> mapa = new ConcurrentHashMap<>();
-        String[] temparray = tempcookie.split("; ");
+        String[] temparray = tempcookie.split(";");
         for (int i = 0; i < temparray.length; i++) {
             String keyVal = temparray[i];
             String[] keyValarr = keyVal.split("=");

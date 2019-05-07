@@ -91,10 +91,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .anyRequest()
 //                添加权限过滤器
-                .access("@permissionService.hasPermission(request,authentication)")
+                .access("@permissionService.hasPermission(request,authentication)");
 //                .and()
 //               .headers().frameOptions().disable()
-                .and().csrf().disable();
+//                .and().csrf().disable();
 
 
 //        http.logout().logoutSuccessUrl("/");//开启注销功能,并配置退出成功后重定向的的url

@@ -4,7 +4,6 @@ import com.fun.crawl.model.query.FileExtendQuery;
 import com.fun.crawl.service.FileExtendService;
 import com.fun.crawl.service.PanUserService;
 import com.fun.crawl.util.ApiResult;
-import com.fun.crawl.utils.PanApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -42,22 +41,32 @@ public class FilePanController {
 
     @ApiOperation(value = "获取视频文件流", notes = "获取视频文件流", httpMethod = "GET")
     @ApiImplicitParam(name = "获取视频文件流", value = "获取视频文件流", required = true, dataType = "Map")
-    @GetMapping("/{oper_id}")
-    public ApiResult<String> puser(@PathVariable("oper_id") Long oper_id,
-                                   @RequestParam("vpath") String vpath
+    @GetMapping(value = "/video.m3u8",produces ="application/x-mpegURL")
+    public String video(@RequestParam("oper_id") Long oper_id,
+                        @RequestParam("path") String path
     ) {
-         String videoStream=fileExtendService.getVideoStream(oper_id,vpath);
-         return new ApiResult<String>(videoStream);
+        String videoStream = fileExtendService.getVideoStream(oper_id, path);
+        return videoStream;
+    }
+
+    @ApiOperation(value = "获取视频文件流", notes = "获取视频文件流", httpMethod = "GET")
+    @ApiImplicitParam(name = "获取视频文件流", value = "获取视频文件流", required = true, dataType = "Map")
+    @GetMapping(value = "/video/{oper_id}/{fs_id}.m3u8",produces ="application/x-mpegURL")
+    public String video(@PathVariable("oper_id") Long oper_id,
+                        @PathVariable("fs_id") Long fs_id
+    ) {
+        String videoStream = fileExtendService.getVideoStreamByFsId(oper_id, fs_id);
+        return videoStream;
     }
 
 
     @ApiOperation(value = "获取音频文件", notes = "获取音频文件", httpMethod = "GET")
     @ApiImplicitParam(name = "获取音频文件", value = "获取音频文件", required = true, dataType = "Map")
-    @GetMapping("/music")
-    public ApiResult<String> mpath(@RequestParam("oper_id") Long oper_id,
-                                   @RequestParam("mpath") String mpath
+    @PostMapping("/music")
+    public ApiResult<String> music(@RequestParam("oper_id") Long oper_id,
+                                   @RequestParam("path") String path
     ) {
-        String url=fileExtendService.getMusicUrl(oper_id,mpath);
+        String url = fileExtendService.getMusicUrl(oper_id, path);
         return new ApiResult<String>(url);
     }
 
