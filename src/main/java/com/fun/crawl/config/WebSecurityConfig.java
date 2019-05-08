@@ -1,10 +1,10 @@
 package com.fun.crawl.config;
 
 import com.fun.crawl.config.auth.endpoint.AuthExceptionEntryPoint;
-import com.fun.crawl.config.auth.handler.CustomAccessDeniedHandler;
-import com.fun.crawl.config.mobile.config.MobileLoginAuthenticationSecurityConfig;
 import com.fun.crawl.config.auth.filter.JwtAuthenticationFilter;
 import com.fun.crawl.config.auth.filter.JwtLoginFilter;
+import com.fun.crawl.config.auth.handler.CustomAccessDeniedHandler;
+import com.fun.crawl.config.mobile.config.MobileLoginAuthenticationSecurityConfig;
 import com.fun.crawl.security.UserDetailsServiceImpl;
 import com.fun.crawl.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Autowired
     private MobileLoginAuthenticationSecurityConfig mobileLoginAuthenticationSecurityConfig;
 
@@ -91,10 +92,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .anyRequest()
 //                添加权限过滤器
-                .access("@permissionService.hasPermission(request,authentication)");
-//                .and()
-//               .headers().frameOptions().disable()
-//                .and().csrf().disable();
+                .access("@permissionService.hasPermission(request,authentication)")
+                .and()
+                .headers().frameOptions().disable()
+                .and().csrf().disable();
 
 
 //        http.logout().logoutSuccessUrl("/");//开启注销功能,并配置退出成功后重定向的的url

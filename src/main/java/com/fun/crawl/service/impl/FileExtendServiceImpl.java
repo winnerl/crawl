@@ -16,12 +16,9 @@ import com.fun.crawl.utils.PanCoreUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -53,42 +50,6 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
         return query;
     }
 
-    @Override
-    public String getVideoStream(Long uk, String path) {
-        PanUser panUser = panUserService.selectByUk(uk);
-        if (panUser == null) {
-            throw new BusinessException("pan is not exist");
-        }
-        String cookie = panUser.getCookie();
-        String jsons = panUser.getJsons();
-
-        QueryWrapper<FileExtend> queryWrapper = new QueryWrapper();
-        queryWrapper.lambda().eq(FileExtend::getPath, path);
-        queryWrapper.lambda().eq(FileExtend::getOper_id, uk);
-        FileExtend fileExtend = fileExtendMapper.selectOne(queryWrapper);
-        if (fileExtend.getCategory().intValue() != 1) {
-            throw new BusinessException("file type error");
-        }
-
-        try {
-            Map<String, String> map = PanCoreUtil.toMap(jsons);
-            String bdstoken = map.get("bdstoken");
-            String videoAdToken = PanApiService.getVideoAdToken(bdstoken, path, cookie);
-            Thread.sleep(5000);
-            String videoStream = PanApiService.getVideoStream(videoAdToken, path, cookie);
-            if (videoStream.indexOf("\"errno\":133") != -1) {
-                JSONObject parse = (JSONObject) JSON.parse(videoStream);
-                videoAdToken = parse.getString("adToken");
-                Thread.sleep(5000);
-                videoStream = PanApiService.getVideoStream(videoAdToken, path, cookie);
-            }
-
-            return videoStream;
-        } catch (Exception e) {
-
-        }
-        return "";
-    }
 
     /**
      * 获取音乐文件下载地址
@@ -98,7 +59,7 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
      * @return
      */
     @Override
-    public String getMusicUrl(Long uk, String path) {
+    public String getMusicUrl(Long uk, Long fs_id) {
 
         PanUser panUser = panUserService.selectByUk(uk);
         if (panUser == null) {
@@ -107,7 +68,7 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
         String cookie = panUser.getCookie();
         String jsons = panUser.getJsons();
         QueryWrapper<FileExtend> queryWrapper = new QueryWrapper();
-        queryWrapper.lambda().eq(FileExtend::getPath, path);
+        queryWrapper.lambda().eq(FileExtend::getFs_id, fs_id);
         queryWrapper.lambda().eq(FileExtend::getOper_id, uk);
         FileExtend fileExtend = fileExtendMapper.selectOne(queryWrapper);
         if (fileExtend.getCategory().intValue() != 2) {
@@ -171,7 +132,7 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
         if (fileExtend.getCategory().intValue() != 1) {
             throw new BusinessException("file type error");
         }
-        String path=fileExtend.getPath();
+        String path = fileExtend.getPath();
         try {
 
             Map<String, String> map = PanCoreUtil.toMap(jsons);
@@ -187,14 +148,6 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
             }
 
             return videoStream;
-//            return videoStream.replace("#EXTM3U\n" +
-//                    "#EXT-X-TARGETDURATION:15\n" +
-//                    "#EXT-X-DISCONTINUITY","#EXTM3U\n" +
-//                    "#EXT-X-VERSION:3\n" +
-//                    "#EXT-X-ALLOW-CACHE:NO\n" +
-//                    "#EXT-X-TARGETDURATION:6\n" +
-//                    "#EXT-X-MEDIA-SEQUENCE:0\n" +
-//                    "#EXT-X-PLAYLIST-TYPE:VOD");
         } catch (Exception e) {
 
         }

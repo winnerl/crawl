@@ -31,13 +31,6 @@ public interface FileExtendService extends BaseService<FileExtend> {
      */
     FileExtendQuery queryByPage(FileExtendQuery query);
 
-    /**
-     * 获取MP4文件播放流
-     * @param oper_id
-     * @param path
-     * @return
-     */
-    String getVideoStream(Long oper_id, String path);
 
     /**
      * 获取音乐文件下载地址
@@ -45,7 +38,7 @@ public interface FileExtendService extends BaseService<FileExtend> {
      * @param mpath
      * @return
      */
-    String getMusicUrl(Long oper_id, String mpath);
+    String getMusicUrl(Long oper_id, Long fs_id);
 
 
     /**

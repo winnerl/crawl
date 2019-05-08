@@ -38,17 +38,6 @@ public class FilePanController {
         return new ApiResult<FileExtendQuery>(fileExtendService.queryByPage(query));
     }
 
-
-    @ApiOperation(value = "获取视频文件流", notes = "获取视频文件流", httpMethod = "GET")
-    @ApiImplicitParam(name = "获取视频文件流", value = "获取视频文件流", required = true, dataType = "Map")
-    @GetMapping(value = "/video.m3u8",produces ="application/x-mpegURL")
-    public String video(@RequestParam("oper_id") Long oper_id,
-                        @RequestParam("path") String path
-    ) {
-        String videoStream = fileExtendService.getVideoStream(oper_id, path);
-        return videoStream;
-    }
-
     @ApiOperation(value = "获取视频文件流", notes = "获取视频文件流", httpMethod = "GET")
     @ApiImplicitParam(name = "获取视频文件流", value = "获取视频文件流", required = true, dataType = "Map")
     @GetMapping(value = "/video/{oper_id}/{fs_id}.m3u8",produces ="application/x-mpegURL")
@@ -56,17 +45,18 @@ public class FilePanController {
                         @PathVariable("fs_id") Long fs_id
     ) {
         String videoStream = fileExtendService.getVideoStreamByFsId(oper_id, fs_id);
+        response.setHeader("Access-Control-Allow-Origin","*");
+
         return videoStream;
     }
 
-
-    @ApiOperation(value = "获取音频文件", notes = "获取音频文件", httpMethod = "GET")
+    @ApiOperation(value = "获取音频文件", notes = "获取音频文件", httpMethod = "POST")
     @ApiImplicitParam(name = "获取音频文件", value = "获取音频文件", required = true, dataType = "Map")
-    @PostMapping("/music")
-    public ApiResult<String> music(@RequestParam("oper_id") Long oper_id,
-                                   @RequestParam("path") String path
+    @GetMapping(value = "/music/{oper_id}/{fs_id}.mp3")
+    public ApiResult<String> music(@PathVariable("oper_id") Long oper_id,
+                                   @PathVariable("fs_id") Long fs_id
     ) {
-        String url = fileExtendService.getMusicUrl(oper_id, path);
+        String url = fileExtendService.getMusicUrl(oper_id, fs_id);
         return new ApiResult<String>(url);
     }
 
