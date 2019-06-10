@@ -227,12 +227,104 @@ public class PanApiService {
     }
 
     /**
+     * 获取下载路径
+     * 此时的sign必须要和时间相匹配才能获取
+     *
+     * @return
+     */
+    public static String apiDownload(String bdsToken, String sign, List<Long> fidlist, String timestamp, String cookie) {
+
+        Map<String, String> parmsMap = new HashMap<>();
+        parmsMap.put("channel", "chunlei");
+        parmsMap.put("web", "1");
+        parmsMap.put("app_id", app_id);
+        parmsMap.put("bdstoken", bdsToken);
+        parmsMap.put("logid", "");
+        parmsMap.put("clienttype", "0");
+        parmsMap.put("startLogTime", timestamp + "000");
+
+        Map<String, String> postMap = new HashMap<>();
+        postMap.put("fidlist", JSON.toJSONString(fidlist));
+        postMap.put("sign", sign);
+        postMap.put("timestamp", timestamp);
+        postMap.put("type", "dlink");
+        postMap.put("vip", "1");
+        String getString = PanCoreUtil.mapToGetString(parmsMap, true);
+        String res = PanCoreUtil.visit(PANHOST, "/api/download" + getString, postMap, "POST_PARM", cookie, null);
+        JSONObject jsonObject = JSONObject.parseObject(res);
+        JSONArray dlinks = jsonObject.getJSONArray("dlink");
+        JSONObject dlink = (JSONObject) dlinks.get(0);
+        String dlinkUrl = dlink.getString("dlink");
+
+//        String replace = dlinkUrl.replace("d.pcs.baidu.com", "nj02cm01.baidupcs.com");
+        Map<String, String> mainHeader = new HashMap<>();
+        mainHeader.put("Host", "d.pcs.baidu.com");
+        mainHeader.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36");
+        mainHeader.put("Accept", " text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        mainHeader.put("Accept-Encoding", "gzip, deflate, br");
+        mainHeader.put("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+        mainHeader.put("Referer", "https://pan.baidu.com/disk/home?");
+        mainHeader.put("Connection", "keep-alive");
+        mainHeader.put("Range", "bytes=0-");
+        mainHeader.put("Upgrade-Insecure-Requests", "1");
+
+        Map<String, String> mapa = new HashMap<>();
+        String[] split1 = cookie.split(";");
+        for (int i = 0; i < split1.length; i++) {
+            String s1 = split1[i];
+            String[] split2 = s1.split("=");
+            if (split2[0].contains("BDUSS")) {
+                mapa.put(split2[0], split2[1]);
+            }
+            if (split2[0].contains("BAIDUID")) {
+                mapa.put(split2[0], split2[1]);
+            }
+        }
+
+        String tempcookie = "";
+        Set<String> ks = mapa.keySet();
+        Iterator<String> it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = mapa.get(skey);
+            tempcookie += skey + "=" + value + ";";
+        }
+
+
+        Request request = new Request.Builder()
+                .url(dlinkUrl).get()
+                .addHeader("Host", "d.pcs.baidu.com")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("Accept-Language", "zh-CN,zh;q=0.9")
+                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3")
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36")
+                .addHeader("Cookie", tempcookie)
+//                .addHeader("Cookie", "BAIDUID=3BC9C99DEBC6D4D057FA432088582AC4:FG=1; BDUSS=1NDOWpBNWU3QUdqRkNqWlY1ODV6RjRteG1CWG9kdlp5NFB4c0VjVkl1a1BSfnRjSVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA-601wPutNcb")
+                .addHeader("Upgrade-Insecure-Requests", "1")
+                .build();
+        try {
+            OkHttpClient client = new OkHttpClient();
+            Response response = client.newCall(request).execute();
+            Response priorResponse = response.priorResponse();
+            if (priorResponse == null) {
+                return "";
+            }
+            String location = priorResponse.header("Location");
+            return location;
+        } catch (IOException e) {
+
+        }
+
+        return "";
+    }
+
+    /**
      * 获取下载路径第1部
      * 此时的sign必须要和时间相匹配才能获取
      *
      * @return
      */
-    public static String apiDownloadURL(String bdsToken, String sign, List<Long> fidlist, String timestamp, String cookie) {
+    public static String apiDownloadMp3(String bdsToken, String sign, List<Long> fidlist, String timestamp, String cookie) {
 //
 //        String sss=System.currentTimeMillis()/1000+"";
 //        Map<String, String> asMap = new HashMap<>();
@@ -474,7 +566,6 @@ public class PanApiService {
         String cookie = "STOKEN=2a102e6500383e74fd2adea79851f948a41a12b967344726f69530ab73a9670b;PTOKEN=2f03059afaca086c3fffd37ecde9eb47;pcsett=1556540781-1c7c305e486f45218166b32058405a94;pan_login_way=1;SCRC=e2f47b2c1dca501d31097b32c374593f;PANWEB=1;BDUSS=DJzVWRYV3RELVI0OWF3c2YwNm5hMEFRVWI5elc0VjljQWRnd2ZNMXRETHJLTzFjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOubxVzrm8VcU;PASSID=2P72DJ;FILE_STOKEN=2a102e6500383e74fd2adea79851f948a41a12b967344726f69530ab73a9670b;BAIDUID=1AB7DE19E7F69710207B142820B1662D:FG=1;UBI=fi_PncwhpxZ%7ETaJc5TOqqRxC6QC785vNWh4;PANPSC=7630149378413235739%3AQsaf43VL%2Ft4Nqu6Hm%2FZfKJgn1M6s6PFhIxDGQGgSurphs5%2FZj17TVSKbQDGpKep%2Bcpe3QKXhtMijDaTuwfy3xNR028b7i%2B2HmldUB8t5cdtpvcNeNLk7Pb%2FiiUOqky53LvxjdeGWe16DTmdSEuVx3i%2B37N4rR16QY8uG8AM%2BY0Ih6uZoP3DwQ3ePlzJEAU4t4oRCM5jrTJ0BDChpkEtqiw%3D%3D;";
 
 
-
         PanCoreUtil.standard_cookie = cookie;
 //        Map<String, String> mainHeader = PanCoreUtil.getMainHeader();
 //        mainHeader.put("Host", "d.pcs.baidu.com");
@@ -492,10 +583,10 @@ public class PanApiService {
         fidles.add(526056080704766L);//[422493994346459,526056080704766]
 //        String timst = apiDownloadRecentReport(bdstoken, detail, cookie1);
 
-        String xduss="pansec_DCb740ccc5511e5e8fedcff06b081203-EMSYx%2FtAuBSKIp6WfL6WPPsERLnln0THbB9kGqyU4sqppCC2MP4TcU%2BDAMW4yk69q3%2FwPQil01ajqN%2BMZ4J71GkS4lVpCzcEfUIxxizbI2r6tdNbVkalH45SQ14synys0WTOJScpV58DpC6D77ulYMzgDfWkMHWJNqW4IDVXyT%2FUPEsyEqGLz1reFvYVNbVLR9OfzSDNmzzqZVaX09GFK1I9uGxrC5ZPM6Hz2qSM7L2D1aPYXgvtyEmibas4MLXnLyGAdtJIzUZ7A1F9fESDPw%3D%3D";
-        PanCoreUtil.XDUSS(xduss,null);
+        String xduss = "pansec_DCb740ccc5511e5e8fedcff06b081203-EMSYx%2FtAuBSKIp6WfL6WPPsERLnln0THbB9kGqyU4sqppCC2MP4TcU%2BDAMW4yk69q3%2FwPQil01ajqN%2BMZ4J71GkS4lVpCzcEfUIxxizbI2r6tdNbVkalH45SQ14synys0WTOJScpV58DpC6D77ulYMzgDfWkMHWJNqW4IDVXyT%2FUPEsyEqGLz1reFvYVNbVLR9OfzSDNmzzqZVaX09GFK1I9uGxrC5ZPM6Hz2qSM7L2D1aPYXgvtyEmibas4MLXnLyGAdtJIzUZ7A1F9fESDPw%3D%3D";
+        PanCoreUtil.XDUSS(xduss, null);
         String a = "1556454381";
-        String s = apiDownloadURL(bdstoken, sign, fidles, 1556454381 + "", cookie);
+        String s = apiDownloadMp3(bdstoken, sign, fidles, 1556454381 + "", cookie);
 //        fs_id=
         System.out.println(s);
         String path = "/我的资源/34.720p.mp4";
@@ -504,7 +595,7 @@ public class PanApiService {
 
         Request request = new Request.Builder()
 //                .url("https://d.pcs.baidu.com/file/c6dfef6ba983b4efebc82091b76453cb?fid=3754657732-250528-526056080704766&rt=pr&sign=FDtAERVCY-DCb740ccc5511e5e8fedcff06b081203-SEOxdVdftgYI6OEhI2o9JGG58Sk%3D&expires=8h&chkv=1&chkbd=1&chkpc=et&dp-logid=2712727659714700561&dp-callid=0&dstime=1556377698&r=636903735&vip=0").get()
-               .url(s)
+                .url(s)
                 .addHeader("Host", "d.pcs.baidu.com")
                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0")
                 .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -514,7 +605,7 @@ public class PanApiService {
                 .addHeader("Connection", "keep-alive")
 //                .addHeader("Cookie", cookie)
                 //STOKEN=6d09a826797af1cfdce2d9484e70afa4e28643a07317a795429477bd233fe338;BDUSS=pMOFNpS1RadndFYnVkT0p0NTZ0TTJRcGstaWR5VVdFQXJ4b3FHN2hRTWhET3hjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACF~xFwhf8RcWV;BAIDUID=8CF4DFF293BBC0AC80C84A70AF32AF75:FG;
-                        .addHeader("Cookie", "BDUSS=WN5dEtCTExlbzY3SUlKc3Z-NVNaUUZ1U353V1MtQzUwQ1Z2YW9Yb1RlLW0tLXRjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKZuxFymbsRcY;")
+                .addHeader("Cookie", "BDUSS=WN5dEtCTExlbzY3SUlKc3Z-NVNaUUZ1U353V1MtQzUwQ1Z2YW9Yb1RlLW0tLXRjRVFBQUFBJCQAAAAAAAAAAAEAAADJ3xvPu9jS5MyrtuCyu7rDwO0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKZuxFymbsRcY;")
                 .addHeader("Upgrade-Insecure-Requests", "1")
                 .addHeader("cache-control", "no-cache")
                 .addHeader("Postman-Token", "7439d2ea-49c6-45c2-a145-71aef8e6e05a")

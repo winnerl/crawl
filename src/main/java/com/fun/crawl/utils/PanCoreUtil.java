@@ -24,7 +24,7 @@ import static com.fun.crawl.utils.VisitApiUtil.mapToPostStr;
 public class PanCoreUtil {
 
     private static final String CHARSET_NAME = "UTF-8";
-    private static final String POST_TPYE = "multipart/form-data; boundary=" + "-----WP----";
+    private static final String POST_TPYE = "multipart/form-data; boundary=" + "------WebKitFormBoundary7oxyhWkQLfYSlaeV--";
 
     public static final String PHOST = "https://pan.baidu.com";//访问订单系统接口的地址
     public static final String PAN_PASSPORT_HOST = "https://passport.baidu.com";//访问订单系统接口的地址
@@ -248,6 +248,7 @@ public class PanCoreUtil {
 //                RequestBody body = RequestBody.create(mediaType, postString);
 //                request = uilder.post(body).build();
             } else {
+                uilder.addHeader("content-type", POST_TPYE);
                 RequestBody body = RequestBody.create(MediaType.parse(POST_TPYE), mapToPostStr(requestMap));//请求参数
                 if ("DELETE".equals(method.toUpperCase())) {
                     request = uilder.delete(body).build();
@@ -968,6 +969,63 @@ public class PanCoreUtil {
         }
         return null;
     }
+
+    public static ConcurrentHashMap<String, String> cookieMap(String tempcookie) {
+        ConcurrentHashMap<String, String> mapa = new ConcurrentHashMap<>();
+        String[] temparray = tempcookie.split(";");
+        for (int i = 0; i < temparray.length; i++) {
+            String keyVal = temparray[i];
+            String[] keyValarr = keyVal.split("=");
+            mapa.put(keyValarr[0], keyValarr[1]);
+        }
+        return mapa;
+    }
+
+    /**
+     * 第三步，调用V3登录
+     *
+     * @param headers
+     * @return
+     */
+    public static String  superFile(String bduss, Map<String, String> headers) {
+        Map<String, String> params = new HashMap<>();
+        params.put("BDUSS", bduss);
+        params.put("channel", "chunlei");
+        params.put("web", "1");
+        params.put("app_id", "250528");
+        params.put("method", "upload");
+        params.put("clienttype", "0");
+        params.put("logid", "");
+        if (headers == null) {
+            headers = getMainHeader();
+        }
+        String getString = PanCoreUtil.mapToGetString(params, false);
+
+        String cookie =standard_cookie;
+        ConcurrentHashMap<String, String> stringStringConcurrentHashMap = cookieMap(cookie);
+
+//        stringStringConcurrentHashMap.remove("STOKEN");
+//        String file_stoken = stringStringConcurrentHashMap.get("FILE_STOKEN");
+//        stringStringConcurrentHashMap.remove("FILE_STOKEN");
+//        stringStringConcurrentHashMap.put("STOKEN",file_stoken);
+        cookie = "";
+        Set<String> ks= stringStringConcurrentHashMap.keySet();
+        Iterator<String> it = ks.iterator();
+        while (it.hasNext()) {
+            String skey = it.next();
+            String value = standard_cookieMap.get(skey);
+            cookie += skey + "=" + value + ";";
+        }
+        System.out.println(cookie);
+        headers.put("Host", "nj02ct01.pcs.baidu.com");
+        headers.put("Referer", "https://pan.baidu.com/");
+        headers.put("Referer", "https://pan.baidu.com/");
+        headers.put("Origin", "https://pan.baidu.com");
+        headers.put("Accept", "*/*");
+        String post = visit("https://nj02ct01.pcs.baidu.com", "/rest/2.0/pcs/superfile2" + getString, new HashMap<>(), "POST", cookie, headers);
+        return post;
+    }
+
 
     public static Map<String, String> apiSys(String hao123ParamUrl, Map<String, String> headers) {
         Map<String, String> params = new HashMap<>();

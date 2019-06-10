@@ -84,7 +84,7 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
             String sign = PanCoreUtil.getDownloadSign(sign3, sign1);
             List<Long> fidles = new ArrayList<>();
             fidles.add(fileExtend.getFs_id());
-            String url = PanApiService.apiDownloadURL(bdstoken, sign, fidles, timestamp, cookie);
+            String url = PanApiService.apiDownloadMp3(bdstoken, sign, fidles, timestamp, cookie);
             return url;
         } catch (Exception e) {
             panUser = panUserService.sysPanUser(cookie, panUser);
@@ -100,7 +100,7 @@ public class FileExtendServiceImpl extends BaseServiceImpl<FileExtendMapper, Fil
                 String sign = PanCoreUtil.getDownloadSign(sign3, sign1);
                 List<Long> fidles = new ArrayList<>();
                 fidles.add(fileExtend.getFs_id());
-                String url = PanApiService.apiDownloadURL(bdstoken, sign, fidles, timestamp, cookie);
+                String url = PanApiService.apiDownload(bdstoken, sign, fidles, timestamp, cookie);
                 return url;
             } catch (Exception ea) {
 

@@ -161,21 +161,35 @@ class FrameDemo {
 //        System.out.println(PanCoreUtil.standard_cookieMap);
 //        System.out.println("---- HOU--cookeMap-----");
         String bdstoken = map.get("bdstoken");
+//
+//        PanCoreUtil.reportUser(bdstoken,null);
+//
+//        PanCoreUtil.cmsdata(bdstoken,null);
+//        String XDUSS = map.get("XDUSS");
+//        PanCoreUtil.XDUSS(XDUSS,null);
+//        PanCoreUtil.superFile(XDUSS,null);
 
-        PanCoreUtil.reportUser(bdstoken,null);
+        String sign3 = map.get("sign3");
+        String sign1 = map.get("sign1");
+        String timestamp = map.get("timestamp");
 
-        PanCoreUtil.cmsdata(bdstoken,null);
+        String signaa = PanCoreUtil.getDownloadSign(sign3, sign1);
+        List<Long> fidles = new ArrayList<>();
+        fidles.add(526056080704766l);
+        String sas = PanApiService.apiDownload(bdstoken, signaa, fidles, timestamp + "", PanCoreUtil.standard_cookie);
+        System.out.println(sas);
 
-        System.out.println(bdstoken);
-        System.out.println(s);
-        List<FileExtend> time = PanApiService.list(bdstoken, 1, 10, "/", "time", 1, 0, PanCoreUtil.standard_cookie);
 
-        System.out.println(PanCoreUtil.standard_cookie);
-        System.out.println("-----------------------");
-        System.out.println("-----------------------");
-        System.out.println("-----------------------");
-        List<FileExtend> fileExtends = generciTreeNoThread(time, "", "", bdstoken);
-        System.out.println(fileExtends);
+//        System.out.println(bdstoken);
+//        System.out.println(s);
+//        List<FileExtend> time = PanApiService.list(bdstoken, 1, 10, "/", "time", 1, 0, PanCoreUtil.standard_cookie);
+//
+//        System.out.println(PanCoreUtil.standard_cookie);
+//        System.out.println("-----------------------");
+//        System.out.println("-----------------------");
+//        System.out.println("-----------------------");
+//        List<FileExtend> fileExtends = generciTreeNoThread(time, "", "", bdstoken);
+//        System.out.println(fileExtends);
 
 
     }
