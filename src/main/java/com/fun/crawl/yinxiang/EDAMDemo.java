@@ -23,6 +23,7 @@ import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.notestore.NoteFilter;
 import com.evernote.edam.notestore.NoteList;
 import com.evernote.edam.notestore.NoteStore;
+import com.evernote.edam.notestore.SyncState;
 import com.evernote.edam.type.*;
 import com.evernote.edam.userstore.AuthenticationResult;
 import com.evernote.thrift.protocol.TBinaryProtocol;
@@ -176,8 +177,12 @@ public class EDAMDemo {
 
         List<LinkedNotebook> linkedNotebooks = noteStore.listLinkedNotebooks();
 
+
         for (LinkedNotebook linkedNotebook : linkedNotebooks) {
             System.out.println("linkedNotebook: " + linkedNotebook.getShareName());
+            System.out.println("GUID: " + linkedNotebook.getGuid());
+
+
 
             if (linkedNotebook.getShareName().equals("百部世界文学经典课")) {
                 System.out.println("GUID: " + linkedNotebook.getGuid());
@@ -198,6 +203,8 @@ public class EDAMDemo {
 
                 noteFilter.setNotebookGuid(sharedNotebookByAuth.getNotebookGuid());
 
+
+
                 NoteList notes = client.findNotes(authenticationToken, noteFilter, 0, 100);
 //                Note noteaa = client.getNote(authenticationToken, "0b8996ee-3425-47ab-bdfa-6b1e1d0d8ad9", true, true, true, true);
 
@@ -206,7 +213,6 @@ public class EDAMDemo {
                 for (Note note : noteList) {
                     System.out.println("标题："+note.getTitle());
                     System.out.println("getGuid："+note.getGuid());
-
                     Note clientNote = client.getNote(authenticationToken, note.getGuid(), true, true, true, true);
 
 
