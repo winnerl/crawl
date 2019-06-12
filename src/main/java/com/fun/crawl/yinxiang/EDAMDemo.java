@@ -149,6 +149,12 @@ public class EDAMDemo {
             filter.setAscending(true);
 
             NoteList noteList = noteStore.findNotes(filter, 0, 100);
+//            Notebook notebook1=new Notebook();
+//            notebook1.setName("测试生产毕业班aa");
+//
+//            notebook1= noteStore.createNotebook(notebook1);
+
+
             List<Note> notes = noteList.getNotes();
             for (Note note : notes) {
                 System.out.println(" * " + note.getTitle());
@@ -216,9 +222,9 @@ public class EDAMDemo {
                     Note clientNote = client.getNote(authenticationToken, note.getGuid(), true, true, true, true);
 
 
-                    Note copy =clientNote.deepCopy();
-                    copy.setNotebookGuid(tonoteBookgUid);
-//                    noteStore.createNote(copy);
+
+                    clientNote.setNotebookGuid(tonoteBookgUid);
+                    noteStore.createNote(clientNote);
 
 //                    System.out.println("tonoteBookgUid："+tonoteBookgUid);
 
