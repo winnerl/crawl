@@ -24,7 +24,7 @@
         <futool.version>4.5.6</futool.version>
         <mybatis-plus-starter.version>3.1.0</mybatis-plus-starter.version>
         <mybatis-plus-generator.version>3.1.0</mybatis-plus-generator.version>
-        <mysql-connector.version>5.1.46</mysql-connector.version>
+        <mysql-connector.version>8.0.16</mysql-connector.version>
         <velocity.version>1.7</velocity.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-io.version>2.5</commons-io.version>
